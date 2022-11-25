@@ -24,9 +24,6 @@ class CGame(ShowBase):
         #self.camera.setPos(0, -30, 0)
 
 
-
-
-
 # main function
 def main():
     # create an object for the game and run it
