@@ -39,11 +39,6 @@ class CGame(ShowBase):
         # create player instance
         self.player = CPlayer(self.loader, self.render, self.cur_dir)
 
-        panda = self.loader.loadModel("models/panda")
-        panda.setPos(-2,10,0)
-        panda.setScale(0.2, 0.2, 0.2)
-        panda.reparentTo(self.render)
-
 # main function
 def main():
     # create an object for the game and run it
