@@ -4,6 +4,10 @@ from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 import os, sys
 
+from scene import CScene
+from entity import CEntity
+from player import CPlayer
+
 # configuration file location
 loadPrcFile("config/config.prc")
 
@@ -17,12 +21,19 @@ class CGame(ShowBase):
 
         # get current python file location
         self.cur_dir = os.path.abspath(sys.path[0])
+        print(self.cur_dir)
         # convert to panda's specific notation
         self.cur_dir = Filename.fromOsSpecific(self.cur_dir).getFullpath()
+        print(self.cur_dir)
 
         #self.disableMouse()
         #self.camera.setPos(0, -30, 0)
 
+        # load scene model
+        self.scene = CScene(self.loader, self.render)
+
+        # create player instance
+        self.player = CPlayer(self.loader, self.scene.getModel(), self.cur_dir)
 
 # main function
 def main():
