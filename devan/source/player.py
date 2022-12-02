@@ -6,4 +6,4 @@ class CPlayer(CEntity):
     # constructor
     def __init__(self, loader, parent, path):
 
-        super().__init__(loader, parent, path + "/../resources/cat_rigged.fbx")
+        super().__init__(loader, parent, path)
