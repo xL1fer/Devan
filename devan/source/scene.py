@@ -1,9 +1,9 @@
 class CScene():
 
     # constructor
-    def __init__(self, loader, parent):
+    def __init__(self, loader, parent, path):
 
-        self.__model = loader.loadModel("models/environment")
+        self.__model = loader.loadModel(path + "/../resources/cube.obj")
 
         self.__model.reparentTo(parent)
         self.__model.setScale(0.25, 0.25, 0.25)

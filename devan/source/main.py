@@ -29,11 +29,15 @@ class CGame(ShowBase):
         #self.disableMouse()
         self.camera.setPos(0, -30, 0)
 
-        # load scene model
-        self.scene = CScene(self.loader, self.render)
+        # create scene instance
+        self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.obj")
+
+        self.scene.getModel().setScale(150.0, 150.0, 0.1)
+
+        self.scene.getModel().setColor(0.2, 1.0, 0.6, 1.0)
 
         # create player instance
-        self.player = CPlayer(self.loader, self.scene.getModel(), self.cur_dir)
+        self.player = CPlayer(self.loader, self.render, self.cur_dir)
 
 # main function
 def main():

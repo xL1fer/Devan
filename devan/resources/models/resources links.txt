@@ -1,0 +1,24 @@
+:: Models ::
+
+	< cat >
+
+		https://free3d.com/3d-model/lowpoly-cat-rigged-run-animation-756268.html
+
+	< trees >
+		https://free3d.com/3d-model/low_poly_tree-816203.html
+		
+		https://free3d.com/3d-model/low-poly-tree-449895.html
+		
+		https://free3d.com/3d-model/cartoon-mill-on-island-low-poly-25625.html
+		
+	< cars >
+	
+		https://free3d.com/3d-model/cartoon-low-poly-city-cars-pack-32084.html
+		
+	< soldier >
+	
+		https://free3d.com/3d-model/low-poly-soldier-159.html
+		
+	< person >
+	
+		https://free3d.com/3d-model/bernie-sanders-lowpoly-style-rigged-character-478048.html

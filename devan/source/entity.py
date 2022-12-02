@@ -9,7 +9,6 @@ class CEntity():
         # reparent entity
         self.__model.reparentTo(parent)
 
-
     # model getter
     def getModel(self):
         return self.__model
