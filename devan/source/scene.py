@@ -1,5 +1,3 @@
-
-
 class CScene():
 
     # constructor
