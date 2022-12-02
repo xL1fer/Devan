@@ -27,7 +27,7 @@ class CGame(ShowBase):
         print(self.cur_dir)
 
         #self.disableMouse()
-        #self.camera.setPos(0, -30, 0)
+        self.camera.setPos(0, -30, 0)
 
         # load scene model
         self.scene = CScene(self.loader, self.render)
