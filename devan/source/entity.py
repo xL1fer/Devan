@@ -37,9 +37,9 @@ class CEntity():
         self.__model.setColor(r, g, b, a)
 
     # set model position
-    def setPosition(self, x, y, z):
+    def setPos(self, x, y, z):
         self.__model.setPos(x, y, z)
 
-    # set model rotation (H = heading, p = pitch, r = roll)
-    def setRotation(self, H, p, r):
-        self.__model.setHpr(H, p, r)
+    # set model rotation (y = yaw, p = pitch, r = roll)
+    def setRotation(self, y, p, r):
+        self.__model.setHpr(y, p, r)

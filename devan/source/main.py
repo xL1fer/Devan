@@ -40,14 +40,24 @@ class CGame(ShowBase):
 
         # create scene floor
         self.scene = CEntity(self.loader, self.actor_node_physics, self.cur_dir + "/../resources/cube.obj")
-        self.scene.setScale(200.0, 200.0, 0.1)
+        self.scene.setScale(400.0, 400.0, 0.1)
         self.scene.setColor(0.2, 1.0, 0.6, 1.0)
 
         # create player instance
         self.player = CPlayer(self.loader, self.actor_node_physics, self.cur_dir + "/../resources/cat_rigged.obj")
+        self.player.setTargetPos(self.player.getTargetDist(), 0, 30)
         self.player.setScale(0.8, 0.8, 0.8)
-        self.player.setPosition(0, 0, 15)
+        self.player.setPos(0, 0, 15)
         self.player.setRotation(0, 90, 0)
+        self.player.setSpeed(80.0)
+
+        """
+        # auxiliar target visualization
+        self.target = CEntity(self.loader, self.actor_node_physics, self.cur_dir + "/../resources/cube.obj")
+        self.target.setPos(self.player.getTargetDist(), 0, 30)
+        self.target.setColor(0.8, 0.0, 0.0, 1.0)
+        self.target.setSpeed(80.0)
+        """
 
         # create tasks
         self.taskMgr.add(self.keyboardTask, "KeyboardTask")
@@ -138,30 +148,51 @@ class CGame(ShowBase):
     def keyboardTask(self, task):
         dt = globalClock.getDt()
 
+        target_pos = self.player.getTargetPos()
         player_pos = self.player.getPosition()
         camera_pos = self.camera.getPos()
 
+        distance = math.sqrt((target_pos[0] - player_pos[0]) ** 2 + (target_pos[1] - player_pos[1]) ** 2)
+        #print(distance)
+
+        # TODO: finish cat looking at target
+
+        alpha1 = math.acos((target_pos[0] - player_pos[0]) / distance) * 180 / math.pi
+        alpha2 = math.asin((target_pos[1] - player_pos[1]) / distance) * 180 / math.pi
+
+        if alpha2 < 0:
+            alpha = 360 - alpha1
+        else:
+             alpha = alpha1
+
+        if (distance > self.player.getTargetDist()):
+            player_pos[0] = target_pos[0] - math.cos(alpha * math.pi / 180) * self.player.getTargetDist()
+            player_pos[1] = target_pos[1] - math.sin(alpha * math.pi / 180) * self.player.getTargetDist()
+
         if key_map["up"]:
             if (self.camera_mode == THIRDPERSONMODE):
-                player_pos.y += self.player.getSpeed() * dt
+                target_pos[1] += self.player.getSpeed() * dt
+                #player_pos.y += self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
                 pass
         if key_map["left"]:
             if (self.camera_mode == THIRDPERSONMODE):
-                player_pos.x -= self.player.getSpeed() * dt
-                pass
+                target_pos[0] -= self.player.getSpeed() * dt
+                #player_pos.x -= self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
             
                 pass
         if key_map["down"]:
             if (self.camera_mode == THIRDPERSONMODE):
-                player_pos.y -= self.player.getSpeed() * dt
+                target_pos[1] -= self.player.getSpeed() * dt
+                #player_pos.y -= self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
             
                 pass
         if key_map["right"]:
             if (self.camera_mode == THIRDPERSONMODE):
-                player_pos.x += self.player.getSpeed() * dt
+                target_pos[0] += self.player.getSpeed() * dt
+                #player_pos.x += self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
             
                 pass
@@ -169,7 +200,10 @@ class CGame(ShowBase):
             key_map["camera_mode"] = False  # make camera mode only change once per button press
             self.camera_mode = not self.camera_mode
 
-        self.player.setPosition(player_pos.x, player_pos.y, player_pos.z)
+        self.player.setTargetPos(target_pos[0], target_pos[1], target_pos[2])
+        self.player.setPos(player_pos.x, player_pos.y, player_pos.z)
+        # look at the target cube
+        self.player.setRotation(alpha, 90, 0)
 
         return task.cont
 
