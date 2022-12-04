@@ -20,13 +20,13 @@ THIRDPERSONMODE = False     # third person
 
 # keys mapping
 key_map = {
-    "up": False,
-    "down": False,
-    "left": False,
-    "right": False,
-    "camera_mode": False
+    "w": False,
+    "s": False,
+    "a": False,
+    "d": False,
+    "c": False,
+    "space": False
 }
-
 
 # game class
 class CGame(ShowBase):
@@ -48,7 +48,7 @@ class CGame(ShowBase):
         self.player.setTargetPos(self.player.getTargetDist(), 0, 30)
         self.player.setScale(0.8, 0.8, 0.8)
         self.player.setPos(0, 0, 15)
-        self.player.setRotation(0, 90, 0)
+        self.player.setRotation(180, 180, 180)
         self.player.setSpeed(80.0)
 
         """
@@ -99,37 +99,71 @@ class CGame(ShowBase):
         # Key Events Mapping    #
         #########################
 
-        self.accept("w", self.updateKeyMap, ["up", True])
-        self.accept("w-up", self.updateKeyMap, ["up", False])
+        self.accept("w", self.updateKeyMap, ["w", True])
+        self.accept("w-up", self.updateKeyMap, ["w", False])
 
-        self.accept("a", self.updateKeyMap, ["left", True])
-        self.accept("a-up", self.updateKeyMap, ["left", False])
+        self.accept("a", self.updateKeyMap, ["a", True])
+        self.accept("a-up", self.updateKeyMap, ["a", False])
 
-        self.accept("s", self.updateKeyMap, ["down", True])
-        self.accept("s-up", self.updateKeyMap, ["down", False])
+        self.accept("s", self.updateKeyMap, ["s", True])
+        self.accept("s-up", self.updateKeyMap, ["s", False])
 
-        self.accept("d", self.updateKeyMap, ["right", True])
-        self.accept("d-up", self.updateKeyMap, ["right", False])
+        self.accept("d", self.updateKeyMap, ["d", True])
+        self.accept("d-up", self.updateKeyMap, ["d", False])
 
-        self.accept("c", self.updateKeyMap, ["camera_mode", True])
-        self.accept("c-up", self.updateKeyMap, ["camera_mode", False])
+        self.accept("c", self.updateKeyMap, ["c", True])
+        self.accept("c-up", self.updateKeyMap, ["c", False])
+
+        self.accept("space", self.updateKeyMap, ["space", True])
+        self.accept("space-up", self.updateKeyMap, ["space", False])
 
 
         #########################
         # Misc                  #
         #########################
 
+        # Camera
         self.camera_mode = THIRDPERSONMODE
+        self.camera_heading = 0
+        self.camera_pitch = 0
+        self.camera_speed = 2
 
 
     # update key state
     def updateKeyMap(self, key, state):
         key_map[key] = state
 
+        if key_map["c"]:
+            self.camera_mode = not self.camera_mode
+
+            if (self.camera_mode == THIRDPERSONMODE):
+                base.enableMouse()
+
+                # hide mouse cursor
+                props = WindowProperties()
+                props.setCursorHidden(False)
+                base.win.requestProperties(props)
+
+            elif (self.camera_mode == FREEROAMINGMODE):
+                player_position = self.player.getPosition()
+                self.camera.setPos(player_position[0], player_position[1], player_position[2] + 50)
+                self.camera.setHpr(0, 0, 0)
+                
+                base.disableMouse()
+
+                # hide mouse cursor
+                props = WindowProperties()
+                props.setCursorHidden(True)
+                base.win.requestProperties(props)
+
+        if key_map["space"] == True:
+            self.camera_speed = 10
+        else:
+            self.camera_speed = 2
+
 
     # camera task
     def cameraTask(self, task):
-
         if (self.camera_mode == THIRDPERSONMODE):
             player_position = self.player.getPosition()
             # camera position
@@ -138,8 +172,17 @@ class CGame(ShowBase):
             self.camera.lookAt(player_position)
 
         elif (self.camera_mode == FREEROAMINGMODE):
-            
-            pass
+            # mouse look
+            md = base.win.getPointer(0)
+
+            x = md.getX()
+            y = md.getY()
+
+            if base.win.movePointer(0, 300, 300):
+                self.camera_heading = self.camera_heading - (x - 300) * 0.2
+                self.camera_pitch = self.camera_pitch - (y - 300) * 0.2
+
+            self.camera.setHpr(self.camera_heading, self.camera_pitch, 0)
 
         return task.cont
 
@@ -169,36 +212,30 @@ class CGame(ShowBase):
             player_pos[0] = target_pos[0] - math.cos(alpha * math.pi / 180) * self.player.getTargetDist()
             player_pos[1] = target_pos[1] - math.sin(alpha * math.pi / 180) * self.player.getTargetDist()
 
-        if key_map["up"]:
+        if key_map["w"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[1] += self.player.getSpeed() * dt
                 #player_pos.y += self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
-                pass
-        if key_map["left"]:
+                self.camera.setY(base.cam, self.camera.getY(base.cam) + self.camera_speed)
+        if key_map["a"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[0] -= self.player.getSpeed() * dt
                 #player_pos.x -= self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
-            
-                pass
-        if key_map["down"]:
+                self.camera.setX(base.cam, self.camera.getX(base.cam) - self.camera_speed)
+        if key_map["s"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[1] -= self.player.getSpeed() * dt
                 #player_pos.y -= self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
-            
-                pass
-        if key_map["right"]:
+                self.camera.setY(base.cam, self.camera.getY(base.cam) - self.camera_speed)
+        if key_map["d"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[0] += self.player.getSpeed() * dt
                 #player_pos.x += self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
-            
-                pass
-        if key_map["camera_mode"]:
-            key_map["camera_mode"] = False  # make camera mode only change once per button press
-            self.camera_mode = not self.camera_mode
+                self.camera.setX(base.cam, self.camera.getX(base.cam) + self.camera_speed)
 
         self.player.setTargetPos(target_pos[0], target_pos[1], target_pos[2])
         self.player.setPos(player_pos.x, player_pos.y, player_pos.z)
