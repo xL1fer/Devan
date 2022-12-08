@@ -3,14 +3,9 @@ class CEntity():
     # constructor
     def __init__(self, loader, parent, model_path):
 
-        # load model file
-        self.__model = loader.loadModel(model_path)
-
-        # reparent entity
-        self.__model.reparentTo(parent)
-
-        # entity speed
-        self.__speed = 50.0
+        self.__model = loader.loadModel(model_path)     # load static model file
+        self.__model.reparentTo(parent)                 # reparent entity
+        self.__speed = 50.0                             # entity base speed
 
     # model getter
     def getModel(self):

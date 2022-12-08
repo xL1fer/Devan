@@ -9,6 +9,7 @@ import os, sys
 import math
 
 from entity import CEntity
+from animating import CAnimating
 from player import CPlayer
 
 # configuration file location
@@ -38,18 +39,18 @@ class CGame(ShowBase):
         # initialize settings
         self.settingsInitializer()
 
-        # create scene floor
-        self.scene = CEntity(self.loader, self.actor_node_physics, self.cur_dir + "/../resources/cube.obj")
+        # create scene floor entity
+        self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.obj")
         self.scene.setScale(400.0, 400.0, 0.1)
         self.scene.setColor(0.2, 1.0, 0.6, 1.0)
 
         # create player instance
-        self.player = CPlayer(self.loader, self.actor_node_physics, self.cur_dir + "/../resources/cat_rigged.obj")
+        self.player = CPlayer(self.render, self.cur_dir + "/../resources/cat.gltf")
+        self.player.getModel().loop("run", fromFrame=1, toFrame=35)
         self.player.setTargetPos(self.player.getTargetDist(), 0, 30)
-        self.player.setScale(0.8, 0.8, 0.8)
+        self.player.setScale(90, 90, 90)
         self.player.setPos(0, 0, 15)
-        self.player.setRotation(180, 180, 180)
-        self.player.setSpeed(80.0)
+        self.player.setSpeed(160.0)
 
         """
         # auxiliar target visualization
@@ -156,7 +157,7 @@ class CGame(ShowBase):
                 props.setCursorHidden(True)
                 base.win.requestProperties(props)
 
-        if key_map["space"] == True:
+        if key_map["space"]:
             self.camera_speed = 10
         else:
             self.camera_speed = 2
@@ -240,7 +241,7 @@ class CGame(ShowBase):
         self.player.setTargetPos(target_pos[0], target_pos[1], target_pos[2])
         self.player.setPos(player_pos.x, player_pos.y, player_pos.z)
         # look at the target cube
-        self.player.setRotation(alpha, 90, 0)
+        self.player.setRotation(alpha, 0, 0)
 
         return task.cont
 

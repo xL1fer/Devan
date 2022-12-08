@@ -1,12 +1,11 @@
-from entity import CEntity
+from animating import CAnimating
 
-# subclass of entity
-class CPlayer(CEntity):
+class CPlayer(CAnimating):
 
     # constructor
-    def __init__(self, loader, parent, path):
+    def __init__(self, parent, path):
 
-        super().__init__(loader, parent, path)
+        super().__init__(parent, path)
 
         # target is a simple abstraction to help "smoother" player's movements
         self.__target_x = 0.0
