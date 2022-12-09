@@ -36,8 +36,10 @@ class CGame(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
 
-        # initialize settings
+        # initialize settings     #########
         self.settingsInitializer()
+
+        # initialize entities     #########
 
         # create scene floor entity
         self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.obj")
@@ -46,11 +48,11 @@ class CGame(ShowBase):
 
         # create player instance
         self.player = CPlayer(self.render, self.cur_dir + "/../resources/cat.gltf")
-        self.player.getModel().loop("run", fromFrame=1, toFrame=35)
         self.player.setTargetPos(self.player.getTargetDist(), 0, 30)
         self.player.setScale(90, 90, 90)
         self.player.setPos(0, 0, 15)
         self.player.setSpeed(160.0)
+        self.player.setAnimRate("run", 1.5)
 
         """
         # auxiliar target visualization
@@ -60,9 +62,35 @@ class CGame(ShowBase):
         self.target.setSpeed(80.0)
         """
 
-        # create tasks
+        # tasks     #######################
+
         self.taskMgr.add(self.keyboardTask, "KeyboardTask")
         self.taskMgr.add(self.cameraTask, "CameraTask")
+
+        # lights    #######################
+
+        # ambient light
+        self.alight = AmbientLight('alight')
+        self.alight.setColor((0.3, 0.3, 0.3, 1))
+        self.alnp = self.render.attachNewNode(self.alight)
+        self.render.setLight(self.alnp)
+
+        # directional light
+        self.dlight = DirectionalLight('dlight')
+        #self.dlight.setColor((0.8, 0.8, 0.5, 1))
+        self.dlight.setColor((0.8, 0.8, 0.6, 1))
+        self.dlnp = self.render.attachNewNode(self.dlight)
+        self.dlnp.setHpr(0, -60, 0)
+        self.render.setLight(self.dlnp)
+
+        # shaders    ######################
+
+        self.shader1 = Shader.load(
+                                Shader.SL_GLSL,
+                                vertex = self.cur_dir + "/shaders/vertex_shader_illumination_perfragment.glsl",
+                                fragment = self.cur_dir + "/shaders/fragment_shader_illumination_perfragment.glsl"
+                            )
+        #self.player.getModel().setShader(self.shader1)
 
 
     def settingsInitializer(self):
@@ -133,6 +161,16 @@ class CGame(ShowBase):
     # update key state
     def updateKeyMap(self, key, state):
         key_map[key] = state
+
+        if (self.camera_mode == THIRDPERSONMODE):
+            if (key_map["w"] or key_map["a"] or key_map["s"] or key_map["d"]) and not self.player.isMoving():
+                self.player.setMoving(True)
+                #print(self.player.isMoving())
+                self.player.getModel().loop("run", restart=0, fromFrame=1, toFrame=35)
+            elif (not key_map["w"] and not key_map["a"] and not key_map["s"] and not key_map["d"]) and self.player.isMoving():
+                self.player.setMoving(False)
+                #print(self.player.isMoving())
+                self.player.getModel().stop()
 
         if key_map["c"]:
             self.camera_mode = not self.camera_mode

@@ -39,3 +39,7 @@ class CAnimating(CEntity):
     # set moving
     def setMoving(self, moving):
         self.__moving = moving
+
+    # set animatio rate
+    def setAnimRate(self, animation, rate):
+        self.__model.setPlayRate(rate, animation)
