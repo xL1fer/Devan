@@ -52,7 +52,12 @@ class CGame(ShowBase):
         self.player.setScale(90, 90, 90)
         self.player.setPos(0, 0, 15)
         self.player.setSpeed(160.0)
+
         self.player.setAnimRate("run", 1.5)
+        self.player.setAnimRate("idle", 0.7)
+
+        self.player.getModel().loop("idle", fromFrame=1, toFrame=36)
+
 
         """
         # auxiliar target visualization
@@ -170,7 +175,7 @@ class CGame(ShowBase):
             elif (not key_map["w"] and not key_map["a"] and not key_map["s"] and not key_map["d"]) and self.player.isMoving():
                 self.player.setMoving(False)
                 #print(self.player.isMoving())
-                self.player.getModel().stop()
+                self.player.getModel().loop("idle", fromFrame=1, toFrame=36)
 
         if key_map["c"]:
             self.camera_mode = not self.camera_mode
