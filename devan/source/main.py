@@ -57,6 +57,14 @@ class CGame(ShowBase):
         self.player.setAnimRate("idle", 0.7)
         self.player.getModel().loop("idle", fromFrame=1, toFrame=36)
 
+        # small particle around player
+        self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.obj")
+        self.particle.setScale(0.005, 0.005, 0.005)
+        self.particle_radius = 0.4
+        self.particle_height = 0.15
+        self.particle_height_increment = 0.0001
+        self.particle.setPos(0, -self.particle_radius / 2, self.particle_height)
+        self.particle.setColor(1.0, 0.0, 0.0, 1)
 
         """
         # auxiliar target visualization
@@ -70,6 +78,7 @@ class CGame(ShowBase):
 
         self.taskMgr.add(self.keyboardTask, "KeyboardTask")
         self.taskMgr.add(self.cameraTask, "CameraTask")
+        self.taskMgr.add(self.particleTask, "ParticleTask")
 
         # lights    #######################
 
@@ -89,22 +98,12 @@ class CGame(ShowBase):
 
         # shaders    ######################
 
-        """
-        self.shader1 = Shader.load(
-                                Shader.SL_GLSL,
-                                vertex = self.cur_dir + "/shaders/vertex_shader_illumination_perfragment.glsl",
-                                fragment = self.cur_dir + "/shaders/fragment_shader_illumination_perfragment.glsl"
-                            )
-        self.player.getModel().setShader(self.shader1)
-        """
-
-
-        self.shader1 = Shader.load(
+        """self.shader1 = Shader.load(
                                 Shader.SL_GLSL,
                                 vertex = self.cur_dir + "/shaders/vertex_shader.glsl",
                                 fragment = self.cur_dir + "/shaders/fragment_shader.glsl"
                             )
-        self.player.getModel().setShader(self.shader1)
+        self.player.getModel().setShader(self.shader1)"""
 
 
     def settingsInitializer(self):
@@ -130,7 +129,7 @@ class CGame(ShowBase):
 
         self.physics_node = NodePath("PhysicsNode")
         self.physics_node.reparentTo(self.render)
-        self.actor_node = ActorNode("jetpack-guy-physics")
+        self.actor_node = ActorNode("test-physics")
         self.actor_node_physics = self.physics_node.attachNewNode(self.actor_node)
         base.physicsMgr.attachPhysicalNode(self.actor_node)
         #jetpackGuy = loader.loadModel("models/jetpack_guy")
@@ -237,6 +236,8 @@ class CGame(ShowBase):
 
             self.camera.setHpr(self.camera_heading, self.camera_pitch, 0)
 
+        self.player.getModel().set_shader_input("cameraPosition", self.camera.get_pos())
+
         return task.cont
 
 
@@ -294,6 +295,17 @@ class CGame(ShowBase):
         self.player.setPos(player_pos.x, player_pos.y, player_pos.z)
         # look at the target cube
         self.player.setRotation(alpha, 0, 0)
+
+        return task.cont
+
+    def particleTask(self, task):
+        self.particle_height += self.particle_height_increment
+        if self.particle_height < 0.12 or self.particle_height > 0.18:
+            self.particle_height_increment *= -1
+
+        angle_degrees = task.time * 20.0
+        angle_radians = angle_degrees * (math.pi / 180.0)
+        self.particle.setPos((self.particle_radius / 8) * math.sin(angle_radians), (-self.particle_radius / 2) - (self.particle_radius / 8) * math.cos(angle_radians), self.particle_height)
 
         return task.cont
 
