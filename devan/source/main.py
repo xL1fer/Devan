@@ -51,11 +51,10 @@ class CGame(ShowBase):
         self.player.setTargetPos(self.player.getTargetDist(), 0, 30)
         self.player.setScale(90, 90, 90)
         self.player.setPos(0, 0, 15)
-        self.player.setSpeed(160.0)
+        self.player.setSpeed(180.0)
 
-        self.player.setAnimRate("run", 1.5)
+        #self.player.setAnimRate("run", 1.7)
         self.player.setAnimRate("idle", 0.7)
-
         self.player.getModel().loop("idle", fromFrame=1, toFrame=36)
 
 
@@ -90,12 +89,22 @@ class CGame(ShowBase):
 
         # shaders    ######################
 
+        """
         self.shader1 = Shader.load(
                                 Shader.SL_GLSL,
                                 vertex = self.cur_dir + "/shaders/vertex_shader_illumination_perfragment.glsl",
                                 fragment = self.cur_dir + "/shaders/fragment_shader_illumination_perfragment.glsl"
                             )
-        #self.player.getModel().setShader(self.shader1)
+        self.player.getModel().setShader(self.shader1)
+        """
+
+
+        self.shader1 = Shader.load(
+                                Shader.SL_GLSL,
+                                vertex = self.cur_dir + "/shaders/vertex_shader.glsl",
+                                fragment = self.cur_dir + "/shaders/fragment_shader.glsl"
+                            )
+        self.player.getModel().setShader(self.shader1)
 
 
     def settingsInitializer(self):
@@ -162,7 +171,6 @@ class CGame(ShowBase):
         self.camera_pitch = 0
         self.camera_speed = 2
 
-
     # update key state
     def updateKeyMap(self, key, state):
         key_map[key] = state
@@ -171,11 +179,12 @@ class CGame(ShowBase):
             if (key_map["w"] or key_map["a"] or key_map["s"] or key_map["d"]) and not self.player.isMoving():
                 self.player.setMoving(True)
                 #print(self.player.isMoving())
-                self.player.getModel().loop("run", restart=0, fromFrame=1, toFrame=35)
+                self.player.animationBlend("idle", "run", 1, 36, 2.0)
+
             elif (not key_map["w"] and not key_map["a"] and not key_map["s"] and not key_map["d"]) and self.player.isMoving():
                 self.player.setMoving(False)
                 #print(self.player.isMoving())
-                self.player.getModel().loop("idle", fromFrame=1, toFrame=36)
+                self.player.animationBlend("run", "idle", 1, 36, 0.7)
 
         if key_map["c"]:
             self.camera_mode = not self.camera_mode

@@ -1,4 +1,5 @@
 from direct.actor.Actor import Actor
+from direct.interval.ActorInterval import LerpAnimInterval
 
 from entity import CEntity
 
@@ -43,3 +44,11 @@ class CAnimating(CEntity):
     # set animatio rate
     def setAnimRate(self, animation, rate):
         self.__model.setPlayRate(rate, animation)
+
+    # animations blending
+    def animationBlend(self, from_anim, to_anim, from_frame=1, to_frame=36,  rate=1, part=None):
+        self.__model.enableBlend()
+        self.__model.loop(to_anim, partName=part, fromFrame=from_frame, toFrame=to_frame)
+        self.__model.setPlayRate(rate, to_anim, partName=part)
+        interv = LerpAnimInterval(self.__model, 0.25, from_anim, to_anim, partName=part)
+        interv.start()
