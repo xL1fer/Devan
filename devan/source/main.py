@@ -18,8 +18,8 @@ from player import CPlayer
 loadPrcFile("../config/config.prc")
 
 # camera modes definitions
-FREEROAMINGMODE = True     # free roaming
-THIRDPERSONMODE = False     # third person
+FREEROAMINGMODE = True  # free roaming
+THIRDPERSONMODE = False  # third person
 
 # keys mapping
 key_map = {
@@ -30,6 +30,7 @@ key_map = {
     "c": False,
     "space": False
 }
+
 
 # game class
 class CGame(ShowBase):
@@ -48,34 +49,118 @@ class CGame(ShowBase):
         #########################
 
         # create scene floor entity
+        """
         self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.obj")
-        self.scene.setScale(1000.0, 1000.0, 0.1)
+        self.scene.setScale(1010.0, 1010.0, 0.1)
         self.scene.setColor(0.2, 1.0, 0.6, 1.0)
+        """
+
+        # loading grass / scene floor
+        grass_texture = self.loader.loadTexture(self.cur_dir + "/../resources/grass.jpg")
+        self.grass = CEntity(self.loader, self.render, self.cur_dir + "/../resources/grass.obj", grass_texture)
+        self.grass.setScale(6.75, 6.75, 0.75)
+        self.grass.setPos(0, 0, -3.25)
+
 
         # card box entity
-        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/box.gltf")
+        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/box.gltf", None)
         self.box.setPos(-1050, -1050, 15)
         self.box.setRotation(70.0, 70.0, 0.0)
         self.box.setScale(2000.0, 2000.0, 2000.0)
 
         # dumpster entity
-        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/dumpster.gltf")
+        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/dumpster.gltf", None)
         self.box.setPos(-1080, -900, 0)
         self.box.setRotation(70.0, 0.0, 0.0)
         self.box.setScale(40.0, 40.0, 40.0)
 
-        # spawning some trees
-        for z in range(10):
-            self.trees = set()
-            for i in range((z*2)+1):
-                y_tree = random.randint(-900 + z*200, -800 + z*200)
-                x_tree = random.randint(-1000, y_tree - 100)
+        # spawning some bushes and trees
+        self.trees_ud = list()  # upper diagonal
+        self.trees_ld = list()  # lower diagonal
+        for z in range(10):  # divide both diagonals in 10 'divs'
+            self.trees_ud.append([])
+            self.trees_ld.append([])
 
+            # bushes
+            for i in range((z * 2) + 1):
+                # upper diagonal
+                y_bush = random.randint(-900 + z * 200, -800 + z * 200)
+                x_bush = random.randint(-1000, y_bush - 100)
+                while True:  # checking distances
+                    flag = False
+                    for t in self.trees_ud[-1]:
+                        dist = math.dist(t[0:2], (x_bush, y_bush))
+                        if dist <= 50:
+                            flag = True
+                            break
+
+                    if flag:
+                        y_bush = random.randint(-900 + z * 200, -800 + z * 200)
+                        x_bush = random.randint(-1000, y_bush - 100)
+                    else:
+                        break
+
+                bush_texture = self.loader.loadTexture(self.cur_dir + "/../resources/leaf.jpg")
+                bush = CEntity(self.loader, self.render, self.cur_dir + "/../resources/bush1.FBX", bush_texture)
+                bush.setScale(0.175, 0.175, 0.175)
+                bush.setPos(x_bush, y_bush, 1)
+                bush.setRotation(0, 90, 0)
+                self.trees_ud[-1].append((x_bush, y_bush, 0))
+
+
+                # lower diagonal
+                y_bush2 = random.randint(800 - z * 200, 900 - z * 200)
+                x_bush2 = random.randint(y_bush2 + 100, 1000)
+                while True:  # checking distances
+                    flag = False
+                    for t in self.trees_ld[-1]:
+                        dist = math.dist(t[0:2], (x_bush2, y_bush2))
+                        if dist <= 50:
+                            flag = True
+                            break
+
+                    if flag:
+                        y_bush2 = random.randint(800 - z * 200, 900 - z * 200)
+                        x_bush2 = random.randint(y_bush2 + 100, 1000)
+                    else:
+                        break
+
+                bush_texture = self.loader.loadTexture(self.cur_dir + "/../resources/leaf.jpg")
+                bush = CEntity(self.loader, self.render, self.cur_dir + "/../resources/bush1.FBX", bush_texture)
+                bush.setScale(0.175, 0.175, 0.175)
+                bush.setPos(x_bush2, y_bush2, 0)
+                bush.setRotation(0, 90, 0)
+                self.trees_ld[-1].append((x_bush2, y_bush2, 0))
+
+            # spawning a different number of tress considering the length of each 'div'
+            if z > 7:
+                ind = 4
+            elif z > 4:
+                ind = 2
+            else:
+                ind = 1
+
+            # trees
+            for i in range(ind):
+                # upper diagonal
+                y_tree = random.randint(-900 + z * 200, -800 + z * 200)
+                x_tree = random.randint(-1000, y_tree - 100)
                 while True:
                     flag = False
-                    for t in self.trees:
-                        dist = math.dist(t, (x_tree, y_tree))
-                        if dist <= 55:
+                    for t in self.trees_ud[z]:  # check distance in current 'div'
+                        dist = math.dist(t[0:2], (x_tree, y_tree))
+                        if t[2] == 0 and dist <= 50:
+                            flag = True
+                            break
+                        if t[2] == 1 and dist <= 150:
+                            flag = True
+                            break
+                    for t in self.trees_ud[z - 1]:  # check distance in previous 'div'
+                        dist = math.dist(t[0:2], (x_tree, y_tree))
+                        if t[2] == 0 and dist <= 50:
+                            flag = True
+                            break
+                        if t[2] == 1 and dist <= 150:
                             flag = True
                             break
 
@@ -85,18 +170,47 @@ class CGame(ShowBase):
                     else:
                         break
 
-                tree = CEntity(self.loader, self.render, self.cur_dir + "/../resources/small_tree.gltf")
-                tree.setScale(2, 2, 2)
-                tree.setPos(x_tree, y_tree, 1)
+                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj", None)
+                tree2.setScale(0.075, 0.075, 0.075)
+                tree2.setPos(x_tree, y_tree, 15)
+                tree2.setRotation(0, 90, 0)
+                self.trees_ud[z].append((x_tree, y_tree, 1))
 
-                self.trees.add((x_tree, y_tree))
 
-            """
-            tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj")
-            tree2.setScale(3, 3, 3)
-            tree2.setPos(-150*i, -150*i, 2)
-            tree2.setRotation(0, 90, 0)
-            """
+                # lower diagonal
+                y_tree2 = random.randint(800 - z * 200, 900 - z * 200)
+                x_tree2 = random.randint(y_tree2 + 100, 1000)
+                while True:
+                    flag = False
+                    for t in self.trees_ld[z]:  # check distance in current 'div'
+                        dist = math.dist(t[0:2], (x_tree2, y_tree2))
+                        if t[2] == 0 and dist <= 50:
+                            flag = True
+                            break
+                        if t[2] == 1 and dist <= 150:
+                            flag = True
+                            break
+                    for t in self.trees_ld[z - 1]:  # check distance in previous 'div'
+                        dist = math.dist(t[0:2], (x_tree2, y_tree2))
+                        if t[2] == 0 and dist <= 50:
+                            flag = True
+                            break
+                        if t[2] == 1 and dist <= 150:
+                            flag = True
+                            break
+
+                    if flag:
+                        y_tree2 = random.randint(800 - z * 200, 900 - z * 200)
+                        x_tree2 = random.randint(y_tree2 + 100, 1000)
+                    else:
+                        break
+
+                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj", None)
+                tree2.setScale(0.075, 0.075, 0.075)
+                tree2.setPos(x_tree2, y_tree2, 15)
+                tree2.setRotation(0, 90, 0)
+                self.trees_ld[z].append((x_tree2, y_tree2, 1))
+
 
         #########################
         # Player                #
@@ -105,16 +219,17 @@ class CGame(ShowBase):
         # create player instance
         self.player = CPlayer(self.render, self.cur_dir + "/../resources/cat.gltf")
         self.player.setTargetPos(-1000 + self.player.getTargetDist(), -1000, 30)
-        self.player.setScale(90, 90, 90)
+        self.player.setScale(80, 80, 80)
         self.player.setPos(-1000, -1000, 3)
         self.player.setSpeed(180.0)
 
-        #self.player.setAnimRate("run", 1.7)
+        # self.player.setAnimRate("run", 1.7)
         self.player.setAnimRate("idle", 0.7)
         self.player.getModel().loop("idle", fromFrame=1, toFrame=36)
 
+
         # small particle around player
-        self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.obj")
+        self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.obj", None)
         self.particle.setScale(0.005, 0.005, 0.005)
         self.particle_radius = 0.4
         self.particle_height = self.player.getPos().z / 100
@@ -146,10 +261,10 @@ class CGame(ShowBase):
         self.render.setLight(self.alnp)
 
         # directional light (simulates the sun)
-        self.sun_direction = -60 #90
+        self.sun_direction = -60  # 90
         self.sun_speed = 1.0
         self.dlight = DirectionalLight('dlight')
-        #self.dlight.setColor((0.8, 0.8, 0.5, 1))
+        # self.dlight.setColor((0.8, 0.8, 0.5, 1))
         self.dlight.setColor((0.8, 0.8, 0.6, 1))
         self.dlnp = self.render.attachNewNode(self.dlight)
         self.dlnp.setHpr(0, self.sun_direction, 0)
@@ -164,7 +279,6 @@ class CGame(ShowBase):
                             )
         self.player.getModel().setShader(self.shader1)"""
 
-
     def settingsInitializer(self):
         #########################
         # Folder Directory      #
@@ -175,7 +289,7 @@ class CGame(ShowBase):
         # convert to panda's specific notation
         self.cur_dir = Filename.fromOsSpecific(self.cur_dir).getFullpath()
 
-        #self.disableMouse()
+        # self.disableMouse()
 
         #########################
         # Physics               #
@@ -191,9 +305,9 @@ class CGame(ShowBase):
         self.actor_node = ActorNode("test-physics")
         self.actor_node_physics = self.physics_node.attachNewNode(self.actor_node)
         base.physicsMgr.attachPhysicalNode(self.actor_node)
-        #jetpackGuy = loader.loadModel("models/jetpack_guy")
-        #jetpackGuy.reparentTo(anp)
-        
+        # jetpackGuy = loader.loadModel("models/jetpack_guy")
+        # jetpackGuy.reparentTo(anp)
+
         self.actor_node.getPhysicsObject().setMass(136.077)
 
         #########################
@@ -218,7 +332,6 @@ class CGame(ShowBase):
         self.accept("space", self.updateKeyMap, ["space", True])
         self.accept("space-up", self.updateKeyMap, ["space", False])
 
-
         #########################
         # Misc                  #
         #########################
@@ -236,12 +349,13 @@ class CGame(ShowBase):
         if (self.camera_mode == THIRDPERSONMODE):
             if (key_map["w"] or key_map["a"] or key_map["s"] or key_map["d"]) and not self.player.isMoving():
                 self.player.setMoving(True)
-                #print(self.player.isMoving())
+                # print(self.player.isMoving())
                 self.player.animationBlend("idle", "run", 1, 36, 2.0)
 
-            elif (not key_map["w"] and not key_map["a"] and not key_map["s"] and not key_map["d"]) and self.player.isMoving():
+            elif (not key_map["w"] and not key_map["a"] and not key_map["s"] and not key_map[
+                "d"]) and self.player.isMoving():
                 self.player.setMoving(False)
-                #print(self.player.isMoving())
+                # print(self.player.isMoving())
                 self.player.animationBlend("run", "idle", 1, 36, 0.7)
 
         if key_map["c"]:
@@ -259,7 +373,7 @@ class CGame(ShowBase):
                 player_position = self.player.getPos()
                 self.camera.setPos(player_position[0], player_position[1], player_position[2] + 50)
                 self.camera.setHpr(0, 0, 0)
-                
+
                 base.disableMouse()
 
                 # hide mouse cursor
@@ -271,7 +385,6 @@ class CGame(ShowBase):
             self.camera_speed = 10
         else:
             self.camera_speed = 2
-
 
     # camera task
     def cameraTask(self, task):
@@ -299,7 +412,6 @@ class CGame(ShowBase):
 
         return task.cont
 
-
     # keyboard tasks
     def keyboardTask(self, task):
         dt = globalClock.getDt()
@@ -309,7 +421,7 @@ class CGame(ShowBase):
         camera_pos = self.camera.getPos()
 
         distance = math.sqrt((target_pos[0] - player_pos[0]) ** 2 + (target_pos[1] - player_pos[1]) ** 2)
-        #print(distance)
+        # print(distance)
 
         # TODO: finish cat looking at target
 
@@ -319,7 +431,7 @@ class CGame(ShowBase):
         if alpha2 < 0:
             alpha = 360 - alpha1
         else:
-             alpha = alpha1
+            alpha = alpha1
 
         if (distance > self.player.getTargetDist()):
             player_pos[0] = target_pos[0] - math.cos(alpha * math.pi / 180) * self.player.getTargetDist()
@@ -328,25 +440,25 @@ class CGame(ShowBase):
         if key_map["w"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[1] += self.player.getSpeed() * dt
-                #player_pos.y += self.player.getSpeed() * dt
+                # player_pos.y += self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
                 self.camera.setY(base.cam, self.camera.getY(base.cam) + self.camera_speed)
         if key_map["a"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[0] -= self.player.getSpeed() * dt
-                #player_pos.x -= self.player.getSpeed() * dt
+                # player_pos.x -= self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
                 self.camera.setX(base.cam, self.camera.getX(base.cam) - self.camera_speed)
         if key_map["s"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[1] -= self.player.getSpeed() * dt
-                #player_pos.y -= self.player.getSpeed() * dt
+                # player_pos.y -= self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
                 self.camera.setY(base.cam, self.camera.getY(base.cam) - self.camera_speed)
         if key_map["d"]:
             if (self.camera_mode == THIRDPERSONMODE):
                 target_pos[0] += self.player.getSpeed() * dt
-                #player_pos.x += self.player.getSpeed() * dt
+                # player_pos.x += self.player.getSpeed() * dt
             elif (self.camera_mode == FREEROAMINGMODE):
                 self.camera.setX(base.cam, self.camera.getX(base.cam) + self.camera_speed)
 
@@ -364,7 +476,9 @@ class CGame(ShowBase):
 
         angle_degrees = task.time * 20.0
         angle_radians = angle_degrees * (math.pi / 180.0)
-        self.particle.setPos((self.particle_radius / 8) * math.sin(angle_radians), (-self.particle_radius / 2) - (self.particle_radius / 8) * math.cos(angle_radians), self.particle_height)
+        self.particle.setPos((self.particle_radius / 8) * math.sin(angle_radians),
+                             (-self.particle_radius / 2) - (self.particle_radius / 8) * math.cos(angle_radians),
+                             self.particle_height)
 
         return task.cont
 
