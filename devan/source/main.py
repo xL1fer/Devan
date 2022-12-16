@@ -1,3 +1,5 @@
+import random
+
 from panda3d.core import loadPrcFile
 from panda3d.core import *
 from panda3d.physics import *
@@ -13,7 +15,7 @@ from animating import CAnimating
 from player import CPlayer
 
 # configuration file location
-loadPrcFile("config/config.prc")
+loadPrcFile("../config/config.prc")
 
 # camera modes definitions
 FREEROAMINGMODE = True     # free roaming
@@ -41,16 +43,61 @@ class CGame(ShowBase):
 
         # initialize entities     #########
 
+
+        #########################
+        #      Environment      #
+        #########################
+
         # create scene floor entity
         self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.obj")
-        self.scene.setScale(400.0, 400.0, 0.1)
+        self.scene.setScale(1000.0, 1000.0, 0.1)
         self.scene.setColor(0.2, 1.0, 0.6, 1.0)
+
+
+        # spawning some trees
+        for z in range(10):
+            self.trees = set()
+            for i in range((z*2)+1):
+                y_tree = random.randint(-900 + z*200, -800 + z*200)
+                x_tree = random.randint(-1000, y_tree - 100)
+
+                while True:
+                    flag = False
+                    for t in self.trees:
+                        dist = math.dist(t, (x_tree, y_tree))
+                        if dist <= 55:
+                            flag = True
+                            break
+
+                    if flag:
+                        y_tree = random.randint(-900 + z * 200, -800 + z * 200)
+                        x_tree = random.randint(-1000, y_tree - 100)
+                    else:
+                        break
+
+                tree = CEntity(self.loader, self.render, self.cur_dir + "/../resources/Lowpoly_tree_sample.obj")
+                tree.setScale(2, 2, 2)
+                tree.setPos(x_tree, y_tree, 1)
+                tree.setRotation(0, 90, 0)
+
+                self.trees.add((x_tree, y_tree))
+
+
+
+            """
+            tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj")
+            tree2.setScale(3, 3, 3)
+            tree2.setPos(-150*i, -150*i, 2)
+            tree2.setRotation(0, 90, 0)
+            """
+
+
 
         # create player instance
         self.player = CPlayer(self.render, self.cur_dir + "/../resources/cat.gltf")
-        self.player.setTargetPos(self.player.getTargetDist(), 0, 30)
+        self.player.setTargetPos(-1000 + self.player.getTargetDist(), -1000, 30)
         self.player.setScale(90, 90, 90)
-        self.player.setPos(0, 0, 15)
+        self.player.setPos(-1000, -1000, 15)
         self.player.setSpeed(180.0)
 
         #self.player.setAnimRate("run", 1.7)
