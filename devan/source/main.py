@@ -78,6 +78,7 @@ class CGame(ShowBase):
 
         self.taskMgr.add(self.keyboardTask, "KeyboardTask")
         self.taskMgr.add(self.cameraTask, "CameraTask")
+        self.taskMgr.add(self.dayNightCycle, "DayNightCycle")
         self.taskMgr.add(self.particleTask, "ParticleTask")
 
         # lights    #######################
@@ -306,6 +307,10 @@ class CGame(ShowBase):
         angle_degrees = task.time * 20.0
         angle_radians = angle_degrees * (math.pi / 180.0)
         self.particle.setPos((self.particle_radius / 8) * math.sin(angle_radians), (-self.particle_radius / 2) - (self.particle_radius / 8) * math.cos(angle_radians), self.particle_height)
+
+        return task.cont
+
+    def dayNightCycle(self, task):
 
         return task.cont
 
