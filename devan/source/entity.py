@@ -12,7 +12,7 @@ class CEntity():
         return self.__model
 
     # position getter
-    def getPosition(self):
+    def getPos(self):
         return self.__model.getPos()
 
     # speed getter

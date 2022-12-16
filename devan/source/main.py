@@ -43,9 +43,8 @@ class CGame(ShowBase):
 
         # initialize entities     #########
 
-
         #########################
-        #      Environment      #
+        # Environment           #
         #########################
 
         # create scene floor entity
@@ -53,6 +52,17 @@ class CGame(ShowBase):
         self.scene.setScale(1000.0, 1000.0, 0.1)
         self.scene.setColor(0.2, 1.0, 0.6, 1.0)
 
+        # card box entity
+        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/box.gltf")
+        self.box.setPos(-1050, -1050, 15)
+        self.box.setRotation(70.0, 70.0, 0.0)
+        self.box.setScale(2000.0, 2000.0, 2000.0)
+
+        # dumpster entity
+        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/dumpster.gltf")
+        self.box.setPos(-1080, -900, 0)
+        self.box.setRotation(70.0, 0.0, 0.0)
+        self.box.setScale(40.0, 40.0, 40.0)
 
         # spawning some trees
         for z in range(10):
@@ -75,14 +85,11 @@ class CGame(ShowBase):
                     else:
                         break
 
-                tree = CEntity(self.loader, self.render, self.cur_dir + "/../resources/Lowpoly_tree_sample.obj")
+                tree = CEntity(self.loader, self.render, self.cur_dir + "/../resources/small_tree.gltf")
                 tree.setScale(2, 2, 2)
                 tree.setPos(x_tree, y_tree, 1)
-                tree.setRotation(0, 90, 0)
 
                 self.trees.add((x_tree, y_tree))
-
-
 
             """
             tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj")
@@ -91,13 +98,15 @@ class CGame(ShowBase):
             tree2.setRotation(0, 90, 0)
             """
 
-
+        #########################
+        # Player                #
+        #########################
 
         # create player instance
         self.player = CPlayer(self.render, self.cur_dir + "/../resources/cat.gltf")
         self.player.setTargetPos(-1000 + self.player.getTargetDist(), -1000, 30)
         self.player.setScale(90, 90, 90)
-        self.player.setPos(-1000, -1000, 15)
+        self.player.setPos(-1000, -1000, 3)
         self.player.setSpeed(180.0)
 
         #self.player.setAnimRate("run", 1.7)
@@ -108,7 +117,7 @@ class CGame(ShowBase):
         self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.obj")
         self.particle.setScale(0.005, 0.005, 0.005)
         self.particle_radius = 0.4
-        self.particle_height = 0.15
+        self.particle_height = self.player.getPos().z / 100
         self.particle_height_increment = 0.0001
         self.particle.setPos(0, -self.particle_radius / 2, self.particle_height)
         self.particle.setColor(1.0, 0.0, 0.0, 1)
@@ -136,12 +145,14 @@ class CGame(ShowBase):
         self.alnp = self.render.attachNewNode(self.alight)
         self.render.setLight(self.alnp)
 
-        # directional light
+        # directional light (simulates the sun)
+        self.sun_direction = -60 #90
+        self.sun_speed = 1.0
         self.dlight = DirectionalLight('dlight')
         #self.dlight.setColor((0.8, 0.8, 0.5, 1))
         self.dlight.setColor((0.8, 0.8, 0.6, 1))
         self.dlnp = self.render.attachNewNode(self.dlight)
-        self.dlnp.setHpr(0, -60, 0)
+        self.dlnp.setHpr(0, self.sun_direction, 0)
         self.render.setLight(self.dlnp)
 
         # shaders    ######################
@@ -245,7 +256,7 @@ class CGame(ShowBase):
                 base.win.requestProperties(props)
 
             elif (self.camera_mode == FREEROAMINGMODE):
-                player_position = self.player.getPosition()
+                player_position = self.player.getPos()
                 self.camera.setPos(player_position[0], player_position[1], player_position[2] + 50)
                 self.camera.setHpr(0, 0, 0)
                 
@@ -265,7 +276,7 @@ class CGame(ShowBase):
     # camera task
     def cameraTask(self, task):
         if (self.camera_mode == THIRDPERSONMODE):
-            player_position = self.player.getPosition()
+            player_position = self.player.getPos()
             # camera position
             self.camera.setPos(player_position[0], player_position[1] - 500, player_position[2] + 150)
             # camera looking at player
@@ -294,7 +305,7 @@ class CGame(ShowBase):
         dt = globalClock.getDt()
 
         target_pos = self.player.getTargetPos()
-        player_pos = self.player.getPosition()
+        player_pos = self.player.getPos()
         camera_pos = self.camera.getPos()
 
         distance = math.sqrt((target_pos[0] - player_pos[0]) ** 2 + (target_pos[1] - player_pos[1]) ** 2)
@@ -357,7 +368,15 @@ class CGame(ShowBase):
 
         return task.cont
 
+    # day and night cycle task
     def dayNightCycle(self, task):
+        dt = globalClock.getDt()
+        self.sun_direction += self.sun_speed * dt
+
+        if self.sun_direction > 360:
+            self.sun_direction = 0
+
+        self.dlnp.setHpr(0, self.sun_direction, 0)
 
         return task.cont
 

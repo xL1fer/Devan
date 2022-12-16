@@ -18,7 +18,7 @@ class CAnimating(CEntity):
         return self.__model
 
     # position getter
-    def getPosition(self):
+    def getPos(self):
         return self.__model.getPos()
 
     # is moving
