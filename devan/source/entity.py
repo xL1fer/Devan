@@ -8,7 +8,7 @@ class CEntity():
         self.__speed = 50.0                             # entity base speed
 
         if texture is not None:
-            self.__model.setTexture(texture, 1)
+            self.__model.setTexture(texture)
 
     # model getter
     def getModel(self):

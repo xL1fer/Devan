@@ -50,15 +50,19 @@ class CGame(ShowBase):
 
         # create scene floor entity
         """
-        self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.obj")
+        self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.gltf")
         self.scene.setScale(1010.0, 1010.0, 0.1)
         self.scene.setColor(0.2, 1.0, 0.6, 1.0)
         """
 
         # loading grass / scene floor
-        grass_texture = self.loader.loadTexture(self.cur_dir + "/../resources/grass.jpg")
+        """grass_texture = self.loader.loadTexture(self.cur_dir + "/../resources/grass.jpg")
         self.grass = CEntity(self.loader, self.render, self.cur_dir + "/../resources/grass.obj", grass_texture)
         self.grass.setScale(6.75, 6.75, 0.75)
+        self.grass.setPos(0, 0, -3.25)"""
+
+        self.grass = CEntity(self.loader, self.render, self.cur_dir + "/../resources/grass.gltf")
+        self.grass.setScale(6.75, 6.75, 1.0)
         self.grass.setPos(0, 0, -3.25)
 
 
@@ -100,11 +104,10 @@ class CGame(ShowBase):
                     else:
                         break
 
-                bush_texture = self.loader.loadTexture(self.cur_dir + "/../resources/leaf.jpg")
-                bush = CEntity(self.loader, self.render, self.cur_dir + "/../resources/bush1.FBX", bush_texture)
-                bush.setScale(0.175, 0.175, 0.175)
+                bush_texture = self.loader.loadTexture(self.cur_dir + "/../resources/textures/leaf.jpg")
+                bush = CEntity(self.loader, self.render, self.cur_dir + "/../resources/bush.gltf", bush_texture)
+                bush.setScale(6.0, 6.0, 6.0)
                 bush.setPos(x_bush, y_bush, 1)
-                bush.setRotation(0, 90, 0)
                 self.trees_ud[-1].append((x_bush, y_bush, 0))
 
 
@@ -125,11 +128,10 @@ class CGame(ShowBase):
                     else:
                         break
 
-                bush_texture = self.loader.loadTexture(self.cur_dir + "/../resources/leaf.jpg")
-                bush = CEntity(self.loader, self.render, self.cur_dir + "/../resources/bush1.FBX", bush_texture)
-                bush.setScale(0.175, 0.175, 0.175)
+                bush_texture = self.loader.loadTexture(self.cur_dir + "/../resources/textures/leaf.jpg")
+                bush = CEntity(self.loader, self.render, self.cur_dir + "/../resources/bush.gltf", bush_texture)
+                bush.setScale(6.0, 6.0, 6.0)
                 bush.setPos(x_bush2, y_bush2, 0)
-                bush.setRotation(0, 90, 0)
                 self.trees_ld[-1].append((x_bush2, y_bush2, 0))
 
             # spawning a different number of tress considering the length of each 'div'
@@ -170,10 +172,9 @@ class CGame(ShowBase):
                     else:
                         break
 
-                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj")
-                tree2.setScale(0.075, 0.075, 0.075)
+                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.gltf")
+                tree2.setScale(1.0, 1.0, 1.0)
                 tree2.setPos(x_tree, y_tree, 15)
-                tree2.setRotation(0, 90, 0)
                 self.trees_ud[z].append((x_tree, y_tree, 1))
 
 
@@ -205,10 +206,9 @@ class CGame(ShowBase):
                     else:
                         break
 
-                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj")
-                tree2.setScale(0.075, 0.075, 0.075)
+                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.gltf")
+                tree2.setScale(1.0, 1.0, 1.0)
                 tree2.setPos(x_tree2, y_tree2, 15)
-                tree2.setRotation(0, 90, 0)
                 self.trees_ld[z].append((x_tree2, y_tree2, 1))
 
 
@@ -229,17 +229,17 @@ class CGame(ShowBase):
 
 
         # small particle around player
-        self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.obj")
+        self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.gltf")
         self.particle.setScale(0.005, 0.005, 0.005)
         self.particle_radius = 0.4
-        self.particle_height = self.player.getPos().z / 100
+        self.particle_height = self.player.getPos().z / 20
         self.particle_height_increment = 0.0001
         self.particle.setPos(0, -self.particle_radius / 2, self.particle_height)
         self.particle.setColor(1.0, 0.0, 0.0, 1)
 
         """
         # auxiliar target visualization
-        self.target = CEntity(self.loader, self.actor_node_physics, self.cur_dir + "/../resources/cube.obj")
+        self.target = CEntity(self.loader, self.actor_node_physics, self.cur_dir + "/../resources/cube.gltf")
         self.target.setPos(self.player.getTargetDist(), 0, 30)
         self.target.setColor(0.8, 0.0, 0.0, 1.0)
         self.target.setSpeed(80.0)
