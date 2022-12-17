@@ -1,7 +1,7 @@
 class CEntity():
 
     # constructor
-    def __init__(self, loader, parent, model_path, texture):
+    def __init__(self, loader, parent, model_path, texture=None):
 
         self.__model = loader.loadModel(model_path)     # load static model file
         self.__model.reparentTo(parent)                 # reparent entity

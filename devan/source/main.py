@@ -63,13 +63,13 @@ class CGame(ShowBase):
 
 
         # card box entity
-        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/box.gltf", None)
+        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/box.gltf")
         self.box.setPos(-1050, -1050, 15)
         self.box.setRotation(70.0, 70.0, 0.0)
         self.box.setScale(2000.0, 2000.0, 2000.0)
 
         # dumpster entity
-        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/dumpster.gltf", None)
+        self.box = CEntity(self.loader, self.render, self.cur_dir + "/../resources/dumpster.gltf")
         self.box.setPos(-1080, -900, 0)
         self.box.setRotation(70.0, 0.0, 0.0)
         self.box.setScale(40.0, 40.0, 40.0)
@@ -170,7 +170,7 @@ class CGame(ShowBase):
                     else:
                         break
 
-                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj", None)
+                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj")
                 tree2.setScale(0.075, 0.075, 0.075)
                 tree2.setPos(x_tree, y_tree, 15)
                 tree2.setRotation(0, 90, 0)
@@ -205,7 +205,7 @@ class CGame(ShowBase):
                     else:
                         break
 
-                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj", None)
+                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.obj")
                 tree2.setScale(0.075, 0.075, 0.075)
                 tree2.setPos(x_tree2, y_tree2, 15)
                 tree2.setRotation(0, 90, 0)
@@ -229,7 +229,7 @@ class CGame(ShowBase):
 
 
         # small particle around player
-        self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.obj", None)
+        self.particle = CEntity(self.loader, self.player.getModel(), self.cur_dir + "/../resources/cube.obj")
         self.particle.setScale(0.005, 0.005, 0.005)
         self.particle_radius = 0.4
         self.particle_height = self.player.getPos().z / 100
@@ -370,6 +370,11 @@ class CGame(ShowBase):
                 base.win.requestProperties(props)
 
             elif (self.camera_mode == FREEROAMINGMODE):
+                # make sure animation does not play when in free roaming mode
+                if self.player.isMoving():
+                    self.player.setMoving(False)
+                    self.player.animationBlend("run", "idle", 1, 36, 0.7)
+                    
                 player_position = self.player.getPos()
                 self.camera.setPos(player_position[0], player_position[1], player_position[2] + 50)
                 self.camera.setHpr(0, 0, 0)
