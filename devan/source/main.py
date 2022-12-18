@@ -82,6 +82,7 @@ class CGame(ShowBase):
         self.trees_ud = list()  # upper diagonal
         self.trees_ld = list()  # lower diagonal
 
+        # trees node
         self.trees_node = NodePath("TreesNode")
         self.trees_node.reparentTo(self.render)
         
@@ -499,9 +500,7 @@ class CGame(ShowBase):
                              self.particle_height)
 
         # transparency task       #########
-
         camera_pos = self.camera.getPos()
-
         for tree in self.trees_node.getChildren():
             tree_pos = tree.getPos()
             distance = math.sqrt((tree_pos[0] - camera_pos[0]) ** 2 + (tree_pos[1] - camera_pos[1]) ** 2)
