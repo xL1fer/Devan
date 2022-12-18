@@ -1,3 +1,5 @@
+from panda3d.core import TransparencyAttrib
+
 class CEntity():
 
     # constructor
@@ -9,6 +11,9 @@ class CEntity():
 
         if texture is not None:
             self.__model.setTexture(texture)
+        # enable transparency on trees
+        elif str(parent) == "render/TreesNode":
+            self.__model.setTransparency(TransparencyAttrib.MAlpha)
 
     # model getter
     def getModel(self):

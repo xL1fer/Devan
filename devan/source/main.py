@@ -81,6 +81,10 @@ class CGame(ShowBase):
         # spawning some bushes and trees
         self.trees_ud = list()  # upper diagonal
         self.trees_ld = list()  # lower diagonal
+
+        self.trees_node = NodePath("TreesNode")
+        self.trees_node.reparentTo(self.render)
+        
         for z in range(10):  # divide both diagonals in 10 'divs'
             self.trees_ud.append([])
             self.trees_ld.append([])
@@ -172,19 +176,19 @@ class CGame(ShowBase):
                     else:
                         break
 
-                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.gltf")
-                tree2.setScale(1.0, 1.0, 1.0)
-                tree2.setPos(x_tree, y_tree, 15)
+                tree = CEntity(self.loader, self.trees_node, self.cur_dir + "/../resources/tree.gltf")
+                tree.setScale(1.0, 1.0, 1.0)
+                tree.setPos(x_tree, y_tree, 15)
                 self.trees_ud[z].append((x_tree, y_tree, 1))
 
 
                 # lower diagonal
-                y_tree2 = random.randint(800 - z * 200, 900 - z * 200)
-                x_tree2 = random.randint(y_tree2 + 100, 1000)
+                y_tree = random.randint(800 - z * 200, 900 - z * 200)
+                x_tree = random.randint(y_tree + 100, 1000)
                 while True:
                     flag = False
                     for t in self.trees_ld[z]:  # check distance in current 'div'
-                        dist = math.dist(t[0:2], (x_tree2, y_tree2))
+                        dist = math.dist(t[0:2], (x_tree, y_tree))
                         if t[2] == 0 and dist <= 50:
                             flag = True
                             break
@@ -192,7 +196,7 @@ class CGame(ShowBase):
                             flag = True
                             break
                     for t in self.trees_ld[z - 1]:  # check distance in previous 'div'
-                        dist = math.dist(t[0:2], (x_tree2, y_tree2))
+                        dist = math.dist(t[0:2], (x_tree, y_tree))
                         if t[2] == 0 and dist <= 50:
                             flag = True
                             break
@@ -201,15 +205,15 @@ class CGame(ShowBase):
                             break
 
                     if flag:
-                        y_tree2 = random.randint(800 - z * 200, 900 - z * 200)
-                        x_tree2 = random.randint(y_tree2 + 100, 1000)
+                        y_tree = random.randint(800 - z * 200, 900 - z * 200)
+                        x_tree = random.randint(y_tree + 100, 1000)
                     else:
                         break
 
-                tree2 = CEntity(self.loader, self.render, self.cur_dir + "/../resources/tree.gltf")
-                tree2.setScale(1.0, 1.0, 1.0)
-                tree2.setPos(x_tree2, y_tree2, 15)
-                self.trees_ld[z].append((x_tree2, y_tree2, 1))
+                tree = CEntity(self.loader, self.trees_node, self.cur_dir + "/../resources/tree.gltf")
+                tree.setScale(1.0, 1.0, 1.0)
+                tree.setPos(x_tree, y_tree, 15)
+                self.trees_ld[z].append((x_tree, y_tree, 1))
 
 
         #########################
@@ -220,7 +224,7 @@ class CGame(ShowBase):
         self.player = CPlayer(self.render, self.cur_dir + "/../resources/cat.gltf")
         self.player.setTargetPos(-1000 + self.player.getTargetDist(), -1000, 30)
         self.player.setScale(80, 80, 80)
-        self.player.setPos(-1000, -1000, 3)
+        self.player.setPos(-1000, -1000, 5)
         self.player.setSpeed(180.0)
 
         # self.player.setAnimRate("run", 1.7)
@@ -249,8 +253,7 @@ class CGame(ShowBase):
 
         self.taskMgr.add(self.keyboardTask, "KeyboardTask")
         self.taskMgr.add(self.cameraTask, "CameraTask")
-        self.taskMgr.add(self.dayNightCycle, "DayNightCycle")
-        self.taskMgr.add(self.particleTask, "ParticleTask")
+        self.taskMgr.add(self.globalTask, "GlobalTask")
 
         # lights    #######################
 
@@ -413,7 +416,7 @@ class CGame(ShowBase):
 
             self.camera.setHpr(self.camera_heading, self.camera_pitch, 0)
 
-        self.player.getModel().set_shader_input("cameraPosition", self.camera.get_pos())
+        self.player.getModel().set_shader_input("cameraPosition", self.camera.getPos())
 
         return task.cont
 
@@ -474,7 +477,17 @@ class CGame(ShowBase):
 
         return task.cont
 
-    def particleTask(self, task):
+    def globalTask(self, task):
+        # day and night cycle     #########
+        dt = globalClock.getDt()
+        self.sun_direction += self.sun_speed * dt
+
+        if self.sun_direction > 360:
+            self.sun_direction = 0
+
+        self.dlnp.setHpr(0, self.sun_direction, 0)
+
+        # particle task           #########
         self.particle_height += self.particle_height_increment
         if self.particle_height < 0.12 or self.particle_height > 0.18:
             self.particle_height_increment *= -1
@@ -485,17 +498,18 @@ class CGame(ShowBase):
                              (-self.particle_radius / 2) - (self.particle_radius / 8) * math.cos(angle_radians),
                              self.particle_height)
 
-        return task.cont
+        # transparency task       #########
 
-    # day and night cycle task
-    def dayNightCycle(self, task):
-        dt = globalClock.getDt()
-        self.sun_direction += self.sun_speed * dt
+        camera_pos = self.camera.getPos()
 
-        if self.sun_direction > 360:
-            self.sun_direction = 0
+        for tree in self.trees_node.getChildren():
+            tree_pos = tree.getPos()
+            distance = math.sqrt((tree_pos[0] - camera_pos[0]) ** 2 + (tree_pos[1] - camera_pos[1]) ** 2)
 
-        self.dlnp.setHpr(0, self.sun_direction, 0)
+            if (distance < 250):
+                tree.setAlphaScale(0.3)
+            else:
+                tree.setAlphaScale(1.0)
 
         return task.cont
 
