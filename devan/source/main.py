@@ -42,6 +42,14 @@ class CGame(ShowBase):
         # initialize settings     #########
         self.settingsInitializer()
 
+        # initialize materials    #########
+        my_material = Material()
+        my_material.setShininess(5.0) # Make this material shiny
+        my_material.setAmbient((0, 0, 1, 1)) # Make this material blue
+        my_material.setSpecular((0, 0, 1, 1))
+        my_material.setDiffuse((0, 0, 1, 1))
+        my_material.setEmission((0, 0, 1, 1))
+
         # initialize entities     #########
 
         #########################
@@ -223,6 +231,7 @@ class CGame(ShowBase):
 
         # create player instance
         self.player = CPlayer(self.render, self.cur_dir + "/../resources/cat.gltf")
+        self.player.getModel().setMaterial(my_material) # Apply the material to this nodePath
         self.player.setTargetPos(-1000 + self.player.getTargetDist(), -1000, 30)
         self.player.setScale(80, 80, 80)
         self.player.setPos(-1000, -1000, 5)
@@ -266,7 +275,7 @@ class CGame(ShowBase):
 
         # directional light (simulates the sun)
         self.sun_direction = -60  # 90
-        self.sun_speed = 1.0
+        self.sun_speed = 50.0
         self.dlight = DirectionalLight('dlight')
         # self.dlight.setColor((0.8, 0.8, 0.5, 1))
         self.dlight.setColor((0.8, 0.8, 0.6, 1))
@@ -276,12 +285,13 @@ class CGame(ShowBase):
 
         # shaders    ######################
 
-        """self.shader1 = Shader.load(
+        self.shader1 = Shader.load(
                                 Shader.SL_GLSL,
-                                vertex = self.cur_dir + "/shaders/vertex_shader.glsl",
-                                fragment = self.cur_dir + "/shaders/fragment_shader.glsl"
+                                vertex = self.cur_dir + "/shaders/pervertex.vert",
+                                fragment = self.cur_dir + "/shaders/pervertex.frag"
                             )
-        self.player.getModel().setShader(self.shader1)"""
+        self.player.getModel().setShader(self.shader1)
+
 
     def settingsInitializer(self):
         #########################

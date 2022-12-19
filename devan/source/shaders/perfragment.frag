@@ -1,13 +1,11 @@
-#version 150
+#version 330
 
 precision mediump float;
 
 in vec3 vNormal;
 in vec3 fragPos;
 
-uniform vec4 lightPosition;
-uniform vec3 cameraPosition;
-uniform vec4 lightColor;
+layout(location=0) out vec3 cameraPosition;
 
 out vec4 out_color;
 
@@ -96,9 +94,9 @@ void main() {
   vec3 viewDir = normalize(cameraPosition - fragPos);
   vec3 reflectDir = reflect(-lightDir, norm);
   float spec = pow(max(dot(-viewDir, reflectDir), 0.0), p3d_Material.shininess/2);
-  vec4 specular = specularStrength * spec * vec4(p3d_Material.specular, 1.0) * lightColor;
+  vec4 specular = specularStrength * spec * vec4(p3d_Material.specular, 1.0) * p3d_LightSource[0].color;
   
-  p3d_FragColor = max(diffuse + diffuse, ambient);
+  p3d_FragColor = max(diffuse + specular, ambient);
   //vec4 color = texture(p3d_Texture0, texcoord);
   //p3d_FragColor = color.bgra;
 }
