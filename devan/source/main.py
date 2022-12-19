@@ -287,8 +287,8 @@ class CGame(ShowBase):
 
         self.shader1 = Shader.load(
                                 Shader.SL_GLSL,
-                                vertex = self.cur_dir + "/shaders/pervertex.vert",
-                                fragment = self.cur_dir + "/shaders/pervertex.frag"
+                                vertex = self.cur_dir + "/shaders/perfragment.vert",
+                                fragment = self.cur_dir + "/shaders/perfragment.frag"
                             )
         self.player.getModel().setShader(self.shader1)
 

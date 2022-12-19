@@ -1,10 +1,10 @@
 /*
 Visual Computing 2022/2023
 --------------------------
-João Leite, Luís Batista, Oct. 2022
+Samuel Silva, Oct. 2022
 
-Fragment shader implementing Gouraud shading.
-Illumination is computed for each vertex.
+Fragment shader for flat-shading. The "flat" qualifier tells the shader not to interpolate per-vertex data and use
+just the provoking vertex data.
 
 */
 
@@ -13,7 +13,7 @@ Illumination is computed for each vertex.
 uniform sampler2D p3d_Texture0;
 
 // Passed by vertex shader
-in vec4 vColor;
+flat in vec4 vColor;
 
 in vec2 texcoord;
 

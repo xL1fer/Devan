@@ -5,10 +5,9 @@ precision mediump float;
 in vec3 vNormal;
 in vec3 fragPos;
 
-layout(location=0) out vec3 cameraPosition;
+uniform vec3 cameraPosition;
 
 out vec4 out_color;
-
 
 uniform struct {
   vec4 ambient;
@@ -69,7 +68,7 @@ uniform sampler2D p3d_Texture0;
 in vec2 texcoord;
 
 // Output to the screen
-out vec4 p3d_FragColor;
+out vec4 p3d_Color;
 
 void main() {
   // ambient
@@ -96,7 +95,7 @@ void main() {
   float spec = pow(max(dot(-viewDir, reflectDir), 0.0), p3d_Material.shininess/2);
   vec4 specular = specularStrength * spec * vec4(p3d_Material.specular, 1.0) * p3d_LightSource[0].color;
   
-  p3d_FragColor = max(diffuse + specular, ambient);
+  p3d_Color = max(diffuse + specular, ambient);
   //vec4 color = texture(p3d_Texture0, texcoord);
   //p3d_FragColor = color.bgra;
 }
