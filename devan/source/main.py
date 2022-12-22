@@ -60,13 +60,13 @@ class CGame(ShowBase):
             if (key_map["w"] or key_map["a"] or key_map["s"] or key_map["d"]) and not self.player.isMoving():
                 self.player.setMoving(True)
                 # print(self.player.isMoving())
-                self.player.animationBlend("idle", "run", 1, 36, 2.0)
+                self.player.setAnimBlend("idle", "run", 1, 36, 2.0)
 
             elif (not key_map["w"] and not key_map["a"] and not key_map["s"] and not key_map[
                 "d"]) and self.player.isMoving():
                 self.player.setMoving(False)
                 # print(self.player.isMoving())
-                self.player.animationBlend("run", "idle", 1, 36, 0.7)
+                self.player.setAnimBlend("run", "idle", 1, 36, 0.7)
 
         if key_map["c"]:
             self.camera_mode = not self.camera_mode
@@ -83,7 +83,7 @@ class CGame(ShowBase):
                 # make sure animation does not play when in free roaming mode
                 if self.player.isMoving():
                     self.player.setMoving(False)
-                    self.player.animationBlend("run", "idle", 1, 36, 0.7)
+                    self.player.setAnimBlend("run", "idle", 1, 36, 0.7)
                     
                 player_position = self.player.getPos()
                 self.camera.setPos(player_position[0], player_position[1], player_position[2] + 50)

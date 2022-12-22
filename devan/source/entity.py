@@ -46,3 +46,15 @@ class CEntity():
     # set model rotation (y = yaw, p = pitch, r = roll)
     def setRotation(self, y, p, r):
         self.__model.setHpr(y, p, r)
+
+    # set model material
+    def setMaterial(self, material, override=1):
+        self.__model.setMaterial(material, override)
+
+    # set model shader
+    def setShader(self, shader):
+        self.__model.setShader(shader)
+
+    # set model shader input
+    def setShaderInput(self, key, value):
+        self.__model.setShaderInput(key, value)

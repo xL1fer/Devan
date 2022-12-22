@@ -3,6 +3,7 @@ from panda3d.core import *
 import os
 import sys
 import random
+import math
 
 from entity import CEntity
 from animating import CAnimating
@@ -90,8 +91,8 @@ class CInitializer():
                                 fragment = game.cur_dir + "/shaders/pertriangle.frag"
                             )
 
-        game.player.getModel().setShader(game.shader1)
-        game.player.getModel().set_shader_input("cameraPosition", game.camera.getPos())
+        game.player.setShader(game.shader1)
+        game.player.setShaderInput("cameraPosition", game.camera.getPos())
 
     def initMaterials(game):
         game.test_material = Material()
@@ -279,7 +280,7 @@ class CInitializer():
 
         # create player instance
         game.player = CPlayer(game.render, game.cur_dir + "/../resources/cat.gltf")
-        game.player.getModel().setMaterial(game.test_material, 1) # Apply the material to this nodePath
+        game.player.setMaterial(game.test_material) # Apply the material to this nodePath
         game.player.setTargetPos(-1000 + game.player.getTargetDist(), -1000, 30)
         game.player.setScale(80, 80, 80)
         game.player.setPos(-1000, -1000, 5)
@@ -287,8 +288,7 @@ class CInitializer():
 
         # game.player.setAnimRate("run", 1.7)
         game.player.setAnimRate("idle", 0.7)
-        game.player.getModel().loop("idle", fromFrame=1, toFrame=36)
-
+        game.player.setAnimLoop("idle", 1, 36)
 
         # small particle around player
         game.particle = CEntity(game.loader, game.player.getModel(), game.cur_dir + "/../resources/cube.gltf")
