@@ -104,7 +104,7 @@ void main()
 
     vec3 pos = vec3(p3d_ModelMatrix * p3d_Vertex);
 
-    vNormal = normalize(mat3(transpose(inverse(p3d_ModelMatrix))) * vNormal);  // normals need to be transformed too (not only geometry)
+    vNormal = normalize(mat3(transpose(inverse(p3d_ModelMatrix))) * p3d_Normal);  // normals need to be transformed too (not only geometry)
 
 
     // ambient component
