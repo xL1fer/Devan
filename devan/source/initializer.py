@@ -78,11 +78,21 @@ class CInitializer():
         game.sun_direction = -60  # 90
         game.sun_speed = 50.0
         game.dlight = DirectionalLight('dlight')
-        # game.dlight.setColor((0.8, 0.8, 0.5, 1))
         game.dlight.setColor((0.8, 0.8, 0.6, 1))
         game.dlnp = game.render.attachNewNode(game.dlight)
         game.dlnp.setHpr(0, game.sun_direction, 0)
         game.render.setLight(game.dlnp)
+
+        # spot light
+        game.slight = Spotlight('slight')
+        game.slight.setColor((1, 1, 0, 1))
+        game.lens = PerspectiveLens()
+        game.lens.setFov(90, 90)
+        game.slight.setLens(game.lens)
+        game.slnp = game.render.attachNewNode(game.slight)
+        game.slnp.setPos(0, 5, 300)
+        game.slnp.lookAt(game.skull2.getModel())
+        game.render.setLight(game.slnp)
 
     def initShaders(game):
         game.flatShading = Shader.load(
@@ -327,27 +337,38 @@ class CInitializer():
         """
 
         #########################
+        # Street Light          #
+        #########################
+        game.slight = CEntity(game.loader, game.render, game.cur_dir + "/../resources/slight.gltf")
+        game.slight.setScale(0.4, 0.4, 0.35)
+        game.slight.setPos(5.0, 50.0, 0.0)
+
+        #########################
         # Misc                  #
         #########################
-        game.skullsNode = NodePath("SkullsNode")
-        game.skullsNode.reparentTo(game.render)
-        game.skullsNode.setScale(0.5, 0.5, 0.5)
-        game.skullsNode.setPos(5.0)
+        game.skulls_node = NodePath("SkullsNode")
+        game.skulls_node.reparentTo(game.render)
+        game.skulls_node.setScale(0.5, 0.5, 0.5)
+        game.skulls_node.setPos(5.0)
 
-        game.skull1 = CEntity(game.loader, game.skullsNode, game.cur_dir + "/../resources/skull.obj")
+        game.skulls_rotation = 0
+        game.skulls_height = 15
+        game.skulls_height_increment = 0.03
+
+        game.skull1 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
         game.skull1.setPos(-35.0, 0.0, 0.0)
         game.skull1.setRotation(22.5, 0, 0)
         game.skull1.setShader(game.flatShading)
         game.skull1.setShaderInput("cameraPosition", game.camera.getPos())
         game.skull1.setMaterial(game.blue_material)
 
-        game.skull2 = CEntity(game.loader, game.skullsNode, game.cur_dir + "/../resources/skull.obj")
+        game.skull2 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
         game.skull2.setPos(0.0, 35.0, 0.0)
         game.skull2.setShader(game.gouraudShading)
         game.skull2.setShaderInput("cameraPosition", game.camera.getPos())
         game.skull2.setMaterial(game.blue_material)
 
-        game.skull3 = CEntity(game.loader, game.skullsNode, game.cur_dir + "/../resources/skull.obj")
+        game.skull3 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
         game.skull3.setPos(35.0, 0.0, 0.0)
         game.skull3.setRotation(-22.5, 0, 0)
         game.skull3.setShader(game.phongShading)

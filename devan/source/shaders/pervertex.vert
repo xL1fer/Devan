@@ -50,7 +50,7 @@ uniform struct p3d_LightSourceParameters {
 
   // Transforms view-space coordinates to shadow map coordinates
   mat4 shadowViewMatrix;
-} p3d_LightSource[1];
+} p3d_LightSource[2];
 
 // Access the material attributes assigned via a Material object.
 // Unused struct parameters may be omitted without consequence.
@@ -110,26 +110,35 @@ void main()
     float ambientStrength = 0.3;
     vec4 ambient = ambientStrength * p3d_Material.ambient * p3d_LightSource[0].color;
 
-
     vec3 lightDir;
-    if (p3d_LightSource[0].position[3] == 0.0)    // directional light
-        lightDir = normalize(p3d_LightSource[0].position.xyz);
-    else
-        lightDir = normalize(p3d_LightSource[0].position.xyz - pos);
-    //vec3 lightDir = p3d_LightSource[0].position.xyz;
 
-    // diffuse component
+    vec4 diffuse;
+    diffuse.xyzw = vec4(0.0, 0.0, 0.0, 0.0);
 
-    float diff = max(dot(vNormal, lightDir), 0.0);
+    for (int i = 0; i < 2; i++)
+    {
+      if (p3d_LightSource[i].position[3] == 0.0)    // directional light
+          lightDir = normalize(p3d_LightSource[i].position.xyz);
+      else
+          lightDir = normalize(p3d_LightSource[i].position.xyz - pos);
 
-    vec4 diffuse = diff * p3d_Material.diffuse * p3d_LightSource[0].color;
+      float diff = max(dot(vNormal, lightDir), 0.0);
+
+      diffuse += diff * p3d_Material.diffuse * p3d_LightSource[i].color;
+    }
 
     // specular
     float specularStrength = 0.5;
     vec3 viewDir = normalize(cameraPosition - pos);
     vec3 reflectDir = reflect(-lightDir, vNormal);
     float spec = pow(max(dot(-viewDir, reflectDir), 0.0), p3d_Material.shininess);
-    vec4 specular = specularStrength * spec * vec4(p3d_Material.specular, 1.0) * p3d_LightSource[0].color;
+
+    vec4 specular;
+    specular.xyzw = vec4(0.0, 0.0, 0.0, 0.0);
+    for (int i = 0; i < 2; i++)
+    {
+      specular += specularStrength * spec * vec4(p3d_Material.specular, 1.0) * p3d_LightSource[i].color;
+    }
 
 	  vColor = max(diffuse + specular, ambient);
 

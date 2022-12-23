@@ -60,7 +60,7 @@ uniform struct p3d_LightSourceParameters {
 
   // Transforms view-space coordinates to shadow map coordinates
   mat4 shadowViewMatrix;
-} p3d_LightSource[1];
+} p3d_LightSource[2];
 
 uniform sampler2D p3d_Texture0;
 
@@ -80,20 +80,33 @@ void main() {
 
   vec3 lightDir;
 
-  if (p3d_LightSource[0].position[3] == 0.0) // directional lighting
-      lightDir = normalize(p3d_LightSource[0].position.xyz);
-  else
-      lightDir = normalize(p3d_LightSource[0].position.xyz - fragPos);
+  vec4 diffuse;
+  diffuse.xyzw = vec4(0.0, 0.0, 0.0, 0.0);
 
-  float diff = max(dot(norm, lightDir), 0.0);
-  vec4 diffuse = diff * p3d_Material.diffuse * p3d_LightSource[0].color;
+  for (int i = 0; i < 2; i++)
+  {
+    if (p3d_LightSource[i].position[3] == 0.0)    // directional light
+        lightDir = normalize(p3d_LightSource[i].position.xyz);
+    else
+        lightDir = normalize(p3d_LightSource[i].position.xyz - fragPos);
+
+    float diff = max(dot(norm, lightDir), 0.0);
+
+    diffuse += diff * p3d_Material.diffuse * p3d_LightSource[i].color;
+  }
 
   // specular
   float specularStrength = 0.8;
   vec3 viewDir = normalize(cameraPosition - fragPos);
   vec3 reflectDir = reflect(-lightDir, norm);
   float spec = pow(max(dot(-viewDir, reflectDir), 0.0), p3d_Material.shininess/2);
-  vec4 specular = specularStrength * spec * vec4(p3d_Material.specular, 1.0) * p3d_LightSource[0].color;
+
+  vec4 specular;
+  specular.xyzw = vec4(0.0, 0.0, 0.0, 0.0);
+  for (int i = 0; i < 2; i++)
+  {
+    specular += specularStrength * spec * vec4(p3d_Material.specular, 1.0) * p3d_LightSource[i].color;
+  }
   
   p3d_Color = max(diffuse + specular, ambient);
   //vec4 color = texture(p3d_Texture0, texcoord);

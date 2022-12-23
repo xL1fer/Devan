@@ -39,17 +39,17 @@ class CGame(ShowBase):
         # initialize materials     ##########
         CInitializer.initMaterials(self)
 
-        # initialize tasks     ##############
-        CInitializer.initTasks(self)
-
-        # initialize lights    ##############
-        CInitializer.initLights(self)
-
         # initialize shaders    #############
         CInitializer.initShaders(self)
 
         # initialize entities     ###########
         CInitializer.initEntities(self)
+
+        # initialize lights    ##############
+        CInitializer.initLights(self)
+
+        # initialize tasks     ##############
+        CInitializer.initTasks(self)
 
 
     # update key state
@@ -217,6 +217,19 @@ class CGame(ShowBase):
                 tree.setAlphaScale(0.3)
             else:
                 tree.setAlphaScale(1.0)
+
+        # skulls rotation task       ######
+        self.skulls_rotation += 0.5
+        if (self.skulls_rotation > 360):
+            self.skulls_rotation = 0
+
+        self.skulls_height += self.skulls_height_increment
+        if self.skulls_height < 5 or self.skulls_height > 30:
+            self.skulls_height_increment *= -1
+
+        for skull in self.skulls_node.getChildren():
+            skull.setHpr(self.skulls_rotation, 0.0, 0.0)
+            skull.setZ(self.skulls_height)
 
         return task.cont
 
