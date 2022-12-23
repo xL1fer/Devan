@@ -72,7 +72,7 @@ out vec4 p3d_Color;
 
 void main() {
   // ambient
-  float ambientStrength = 0.2;
+  float ambientStrength = 0.3;
   vec4 ambient = ambientStrength * p3d_Material.ambient * p3d_LightSource[0].color;
 
   // diffuse

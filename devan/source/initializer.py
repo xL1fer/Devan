@@ -85,14 +85,23 @@ class CInitializer():
         game.render.setLight(game.dlnp)
 
     def initShaders(game):
-        game.shader1 = Shader.load(
+        game.flatShading = Shader.load(
                                 Shader.SL_GLSL,
                                 vertex = game.cur_dir + "/shaders/pertriangle.vert",
                                 fragment = game.cur_dir + "/shaders/pertriangle.frag"
                             )
 
-        game.player.setShader(game.shader1)
-        game.player.setShaderInput("cameraPosition", game.camera.getPos())
+        game.gouraudShading = Shader.load(
+                                Shader.SL_GLSL,
+                                vertex = game.cur_dir + "/shaders/pervertex.vert",
+                                fragment = game.cur_dir + "/shaders/pervertex.frag"
+                            )
+
+        game.phongShading = Shader.load(
+                                Shader.SL_GLSL,
+                                vertex = game.cur_dir + "/shaders/perfragment.vert",
+                                fragment = game.cur_dir + "/shaders/perfragment.frag"
+                            )
 
     def initMaterials(game):
         game.test_material = Material()
@@ -100,6 +109,12 @@ class CInitializer():
         game.test_material.setAmbient((1.0, 0.3, 0.3, 1))
         game.test_material.setSpecular((1.0, 0.3, 0.3, 1))
         game.test_material.setDiffuse((1.0, 0.3, 0.3, 1))
+
+        game.blue_material = Material()
+        game.blue_material.setShininess(10.0)
+        game.blue_material.setAmbient((0.2, 0.2, 1.0, 1))
+        game.blue_material.setSpecular((0.2, 0.2, 1.0, 1))
+        game.blue_material.setDiffuse((0.2, 0.2, 1.0, 1))
 
     def initEntities(game):
         #########################
@@ -286,14 +301,18 @@ class CInitializer():
         game.player.setPos(-1000, -1000, 5)
         game.player.setSpeed(180.0)
 
+        game.player.setShader(game.flatShading)
+        game.player.setShaderInput("cameraPosition", game.camera.getPos())
+
         # game.player.setAnimRate("run", 1.7)
         game.player.setAnimRate("idle", 0.7)
         game.player.setAnimLoop("idle", 1, 36)
 
         # small particle around player
         game.particle = CEntity(game.loader, game.player.getModel(), game.cur_dir + "/../resources/cube.gltf")
-        game.particle.setScale(0.005, 0.005, 0.005)
+        game.particle.setScale(0.008, 0.008, 0.008)
         game.particle_radius = 0.4
+        game.particle_rotation = 0
         game.particle_height = game.player.getPos().z / 20
         game.particle_height_increment = 0.0001
         game.particle.setPos(0, -game.particle_radius / 2, game.particle_height)
@@ -306,3 +325,31 @@ class CInitializer():
         game.target.setColor(0.8, 0.0, 0.0, 1.0)
         game.target.setSpeed(80.0)
         """
+
+        #########################
+        # Misc                  #
+        #########################
+        game.skullsNode = NodePath("SkullsNode")
+        game.skullsNode.reparentTo(game.render)
+        game.skullsNode.setScale(0.5, 0.5, 0.5)
+        game.skullsNode.setPos(5.0)
+
+        game.skull1 = CEntity(game.loader, game.skullsNode, game.cur_dir + "/../resources/skull.obj")
+        game.skull1.setPos(-35.0, 0.0, 0.0)
+        game.skull1.setRotation(22.5, 0, 0)
+        game.skull1.setShader(game.flatShading)
+        game.skull1.setShaderInput("cameraPosition", game.camera.getPos())
+        game.skull1.setMaterial(game.blue_material)
+
+        game.skull2 = CEntity(game.loader, game.skullsNode, game.cur_dir + "/../resources/skull.obj")
+        game.skull2.setPos(0.0, 35.0, 0.0)
+        game.skull2.setShader(game.gouraudShading)
+        game.skull2.setShaderInput("cameraPosition", game.camera.getPos())
+        game.skull2.setMaterial(game.blue_material)
+
+        game.skull3 = CEntity(game.loader, game.skullsNode, game.cur_dir + "/../resources/skull.obj")
+        game.skull3.setPos(35.0, 0.0, 0.0)
+        game.skull3.setRotation(-22.5, 0, 0)
+        game.skull3.setShader(game.phongShading)
+        game.skull3.setShaderInput("cameraPosition", game.camera.getPos())
+        game.skull3.setMaterial(game.blue_material)

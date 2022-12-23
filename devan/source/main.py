@@ -39,9 +39,6 @@ class CGame(ShowBase):
         # initialize materials     ##########
         CInitializer.initMaterials(self)
 
-        # initialize entities     ###########
-        CInitializer.initEntities(self)
-
         # initialize tasks     ##############
         CInitializer.initTasks(self)
 
@@ -50,6 +47,9 @@ class CGame(ShowBase):
 
         # initialize shaders    #############
         CInitializer.initShaders(self)
+
+        # initialize entities     ###########
+        CInitializer.initEntities(self)
 
 
     # update key state
@@ -136,8 +136,6 @@ class CGame(ShowBase):
         distance = math.sqrt((target_pos[0] - player_pos[0]) ** 2 + (target_pos[1] - player_pos[1]) ** 2)
         # print(distance)
 
-        # TODO: finish cat looking at target
-
         alpha1 = math.acos((target_pos[0] - player_pos[0]) / distance) * 180 / math.pi
         alpha2 = math.asin((target_pos[1] - player_pos[1]) / distance) * 180 / math.pi
 
@@ -194,7 +192,7 @@ class CGame(ShowBase):
 
         # particle task           #########
         self.particle_height += self.particle_height_increment
-        if self.particle_height < 0.12 or self.particle_height > 0.18:
+        if self.particle_height < self.player.getPos().z / 20 - 0.02 or self.particle_height > self.player.getPos().z / 20 + 0.02:
             self.particle_height_increment *= -1
 
         angle_degrees = task.time * 20.0
@@ -202,6 +200,12 @@ class CGame(ShowBase):
         self.particle.setPos((self.particle_radius / 8) * math.sin(angle_radians),
                              (-self.particle_radius / 2) - (self.particle_radius / 8) * math.cos(angle_radians),
                              self.particle_height)
+
+        self.particle_rotation += 2
+        if self.particle_rotation > 360:
+            self.particle_rotation = 0
+
+        self.particle.setRotation(self.particle_rotation, self.particle_rotation, 0)
 
         # transparency task       #########
         camera_pos = self.camera.getPos()
