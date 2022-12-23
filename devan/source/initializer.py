@@ -135,13 +135,13 @@ class CInitializer():
         self.grass.setPos(0, 0, -3.25)"""
 
         game.grass = CEntity(game.loader, game.render, game.cur_dir + "/../resources/grass.gltf")
-        game.grass.setScale(6.75, 6.75, 1.0)
+        game.grass.setScale(7.50, 7.50, 1.0)
         game.grass.setPos(0, 0, -3.25)
 
         # card box entity
         game.box = CEntity(game.loader, game.render, game.cur_dir + "/../resources/box.gltf")
-        game.box.setPos(-1050, -1050, 15)
-        game.box.setRotation(70.0, 70.0, 0.0)
+        game.box.setPos(-1100, -1050, 20)
+        game.box.setRotation(70.0, 75.0, 0.0)
         game.box.setScale(2000.0, 2000.0, 2000.0)
 
         # dumpster entity
