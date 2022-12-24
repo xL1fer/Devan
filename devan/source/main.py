@@ -5,6 +5,7 @@ from direct.task import Task
 
 import sys
 import math
+import random
 
 from initializer import CInitializer
 
@@ -50,6 +51,9 @@ class CGame(ShowBase):
 
         # initialize tasks     ##############
         CInitializer.initTasks(self)
+
+        # initialize sounds    ##############
+        CInitializer.initSounds(self)
 
 
     # update key state
@@ -237,7 +241,26 @@ class CGame(ShowBase):
             # collect skull
             distance = math.sqrt((skull_pos[0] - player_pos[0]) ** 2 + (skull_pos[1] - player_pos[1]) ** 2)
             if (distance < 40):
-                skull.removeNode()
+                self.pickup_sound.play()
+                
+                #skull.removeNode()
+                skull_pos = []
+
+                while True:
+                    skull_pos = [random.randint(-1000, 1000), random.randint(-1000, 1000), 0.0]
+
+                    for tree in self.trees_node.getChildren():
+                        tree_pos = tree.getPos()
+                        distance = math.sqrt((tree_pos[0] - skull_pos[0]) ** 2 + (tree_pos[1] - skull_pos[1]) ** 2)
+
+                        if (distance < 30):
+                            skull_pos = []
+                            break
+
+                    if skull_pos != []:
+                        break
+                    
+                skull.setPos(skull_pos[0], skull_pos[1], skull_pos[2])
 
         return task.cont
 

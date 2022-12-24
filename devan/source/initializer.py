@@ -118,17 +118,32 @@ class CInitializer():
                             )
 
     def initMaterials(game):
-        game.test_material = Material()
-        game.test_material.setShininess(10.0)
-        game.test_material.setAmbient((1.0, 0.3, 0.3, 1))
-        game.test_material.setSpecular((1.0, 0.3, 0.3, 1))
-        game.test_material.setDiffuse((1.0, 0.3, 0.3, 1))
+        game.emerald_material = Material()
+        game.emerald_material.setAmbient((0.0215, 0.1745, 0.0215, 1))
+        game.emerald_material.setDiffuse((0.07568, 0.61424, 0.07568, 1))
+        game.emerald_material.setSpecular((0.633, 0.727811, 0.633, 1))
+        game.emerald_material.setShininess(0.6)
 
-        game.blue_material = Material()
-        game.blue_material.setShininess(10.0)
-        game.blue_material.setAmbient((0.2, 0.2, 1.0, 1))
-        game.blue_material.setSpecular((0.2, 0.2, 1.0, 1))
-        game.blue_material.setDiffuse((0.2, 0.2, 1.0, 1))
+        game.ruby_material = Material()
+        game.ruby_material.setAmbient((0.1745, 0.01175, 0.01175, 1))
+        game.ruby_material.setDiffuse((0.61424, 0.04136, 0.04136, 1))
+        game.ruby_material.setSpecular((0.727811, 0.626959, 0.626959, 1))
+        game.ruby_material.setShininess(0.6)
+
+        game.gold_material = Material()
+        game.gold_material.setAmbient((0.24725, 0.1995, 0.0745, 1))
+        game.gold_material.setDiffuse((0.75164, 0.60648, 0.22648, 1))
+        game.gold_material.setSpecular((0.628281, 0.555802, 0.366065, 1))
+        game.gold_material.setShininess(0.4)
+
+    def initSounds(game):
+        # pickup sound
+        game.pickup_sound = game.loader.loadSfx(game.cur_dir + "/../resources/sounds/pickup.mp3")
+
+        # ambient sound
+        game.ambient_sound = game.loader.loadSfx(game.cur_dir + "/../resources/sounds/ambient.mp3")
+        game.ambient_sound.setLoop(True)
+        game.ambient_sound.play()
 
     def initEntities(game):
         #########################
@@ -309,7 +324,6 @@ class CInitializer():
 
         # create player instance
         game.player = CPlayer(game.render, game.cur_dir + "/../resources/cat.gltf")
-        game.player.setMaterial(game.test_material) # Apply the material to this nodePath
         game.player.setTargetPos(-1000 + game.player.getTargetDist(), -1000, 30)
         game.player.setScale(80, 80, 80)
         game.player.setPos(-1000, -1000, 5)
@@ -330,7 +344,7 @@ class CInitializer():
         game.particle_height = game.player.getPos().z / 20
         game.particle_height_increment = 0.0001
         game.particle.setPos(0, -game.particle_radius / 2, game.particle_height)
-        game.particle.setColor(1.0, 0.0, 0.0, 1)
+        game.particle.setMaterial(game.emerald_material)
 
         """
         # auxiliar target visualization
@@ -364,14 +378,14 @@ class CInitializer():
         game.skull1.setRotation(22.5, 0, 0)
         game.skull1.setShader(game.flatShading)
         game.skull1.setShaderInput("cameraPosition", game.camera.getPos())
-        game.skull1.setMaterial(game.blue_material)
+        game.skull1.setMaterial(game.emerald_material)
 
         game.skull2 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
         #game.skull2.setPos(0.0, 35.0, 0.0)
         game.skull2.setScale(0.5, 0.5, 0.5)
         game.skull2.setShader(game.gouraudShading)
         game.skull2.setShaderInput("cameraPosition", game.camera.getPos())
-        game.skull2.setMaterial(game.blue_material)
+        game.skull2.setMaterial(game.ruby_material)
 
         game.skull3 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
         #game.skull3.setPos(35.0, 0.0, 0.0)
@@ -379,20 +393,23 @@ class CInitializer():
         game.skull3.setRotation(-22.5, 0, 0)
         game.skull3.setShader(game.phongShading)
         game.skull3.setShaderInput("cameraPosition", game.camera.getPos())
-        game.skull3.setMaterial(game.blue_material)
+        game.skull3.setMaterial(game.gold_material)
 
         for skull in game.skulls_node.getChildren():
+            skull_pos = []
 
-            for tree in game.trees_node.getChildren():
-                tree_pos = tree.getPos()
+            while True:
+                skull_pos = [random.randint(-1000, 1000), random.randint(-1000, 1000), 0.0]
 
-                skull_pos = []
-
-                while True:
-                    skull_pos = [random.randint(-1000, 1000), random.randint(-1000, 1000), 0.0]
+                for tree in game.trees_node.getChildren():
+                    tree_pos = tree.getPos()
                     distance = math.sqrt((tree_pos[0] - skull_pos[0]) ** 2 + (tree_pos[1] - skull_pos[1]) ** 2)
 
-                    if (distance > 30):
+                    if (distance < 30):
+                        skull_pos = []
                         break
+
+                if skull_pos != []:
+                    break
                 
-                skull.setPos(skull_pos[0], skull_pos[1], skull_pos[2])
+            skull.setPos(skull_pos[0], skull_pos[1], skull_pos[2])
