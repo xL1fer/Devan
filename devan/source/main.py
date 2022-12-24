@@ -219,6 +219,8 @@ class CGame(ShowBase):
                 tree.setAlphaScale(1.0)
 
         # skulls rotation task       ######
+        player_pos = self.player.getPos()
+
         self.skulls_rotation += 0.5
         if (self.skulls_rotation > 360):
             self.skulls_rotation = 0
@@ -230,6 +232,12 @@ class CGame(ShowBase):
         for skull in self.skulls_node.getChildren():
             skull.setHpr(self.skulls_rotation, 0.0, 0.0)
             skull.setZ(self.skulls_height)
+            skull_pos = skull.getPos()
+
+            # collect skull
+            distance = math.sqrt((skull_pos[0] - player_pos[0]) ** 2 + (skull_pos[1] - player_pos[1]) ** 2)
+            if (distance < 40):
+                skull.removeNode()
 
         return task.cont
 

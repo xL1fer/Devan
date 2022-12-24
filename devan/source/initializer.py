@@ -84,6 +84,10 @@ class CInitializer():
         game.render.setLight(game.dlnp)
 
         # spot light
+        game.spoint = NodePath("SpotLightPoint")
+        game.spoint.reparentTo(game.render)
+        game.spoint.setPos(0.0, 0.0, 0.0)
+
         game.slight = Spotlight('slight')
         game.slight.setColor((1, 1, 0, 1))
         game.lens = PerspectiveLens()
@@ -91,7 +95,7 @@ class CInitializer():
         game.slight.setLens(game.lens)
         game.slnp = game.render.attachNewNode(game.slight)
         game.slnp.setPos(0, 5, 300)
-        game.slnp.lookAt(game.skull2.getModel())
+        game.slnp.lookAt(game.spoint)
         game.render.setLight(game.slnp)
 
     def initShaders(game):
@@ -348,7 +352,6 @@ class CInitializer():
         #########################
         game.skulls_node = NodePath("SkullsNode")
         game.skulls_node.reparentTo(game.render)
-        game.skulls_node.setScale(0.5, 0.5, 0.5)
         game.skulls_node.setPos(5.0)
 
         game.skulls_rotation = 0
@@ -356,21 +359,40 @@ class CInitializer():
         game.skulls_height_increment = 0.03
 
         game.skull1 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
-        game.skull1.setPos(-35.0, 0.0, 0.0)
+        #game.skull1.setPos(-35.0, 0.0, 0.0)
+        game.skull1.setScale(0.5, 0.5, 0.5)
         game.skull1.setRotation(22.5, 0, 0)
         game.skull1.setShader(game.flatShading)
         game.skull1.setShaderInput("cameraPosition", game.camera.getPos())
         game.skull1.setMaterial(game.blue_material)
 
         game.skull2 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
-        game.skull2.setPos(0.0, 35.0, 0.0)
+        #game.skull2.setPos(0.0, 35.0, 0.0)
+        game.skull2.setScale(0.5, 0.5, 0.5)
         game.skull2.setShader(game.gouraudShading)
         game.skull2.setShaderInput("cameraPosition", game.camera.getPos())
         game.skull2.setMaterial(game.blue_material)
 
         game.skull3 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
-        game.skull3.setPos(35.0, 0.0, 0.0)
+        #game.skull3.setPos(35.0, 0.0, 0.0)
+        game.skull3.setScale(0.5, 0.5, 0.5)
         game.skull3.setRotation(-22.5, 0, 0)
         game.skull3.setShader(game.phongShading)
         game.skull3.setShaderInput("cameraPosition", game.camera.getPos())
         game.skull3.setMaterial(game.blue_material)
+
+        for skull in game.skulls_node.getChildren():
+
+            for tree in game.trees_node.getChildren():
+                tree_pos = tree.getPos()
+
+                skull_pos = []
+
+                while True:
+                    skull_pos = [random.randint(-1000, 1000), random.randint(-1000, 1000), 0.0]
+                    distance = math.sqrt((tree_pos[0] - skull_pos[0]) ** 2 + (tree_pos[1] - skull_pos[1]) ** 2)
+
+                    if (distance > 30):
+                        break
+                
+                skull.setPos(skull_pos[0], skull_pos[1], skull_pos[2])
