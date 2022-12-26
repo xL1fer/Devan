@@ -356,13 +356,14 @@ class CInitializer():
         game.target.setSpeed(80.0)
         """
 
+        """
         #########################
         # Street Light          #
         #########################
         game.slight = CEntity(game.loader, game.render, game.cur_dir + "/../resources/slight.gltf")
         game.slight.setScale(0.4, 0.4, 0.35)
         game.slight.setPos(1100.0, 1100.0, 0.0)
-        game.slight.setRotation(-45, 90, 0) # ...
+        """
 
 
         #########################
@@ -373,10 +374,9 @@ class CInitializer():
             lamp = CEntity(game.loader, game.render, game.cur_dir + "/../resources/lamp.obj")
             lamp.setScale(0.03, 0.03, 0.03)
             lamp.setPos(-1050.0 + 300*i, -1000.0 + 300*i, 10.0)
-            lamp.setRotation(-45, 90, 0) # ...
+            lamp.setRotation(-45, 90, 0)
 
             game.lamps.append(lamp)
-            ind += 1
 
 
         #########################
@@ -431,3 +431,35 @@ class CInitializer():
                     break
                 
             skull.setPos(skull_pos[0], skull_pos[1], skull_pos[2])
+
+
+        #########################
+        # Road                  #
+        #########################
+        game.road = CEntity(game.loader, game.render, game.cur_dir + "/../resources/road.gltf")
+        game.road.setPos(0, 1180, 0)
+        game.road.setScale(50, 700, 50)
+        game.road.setRotation(90, 0, 0)
+
+
+        #########################
+        # Tunnel                #
+        #########################
+        game.tunnel1 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/tunnel.gltf")
+        game.tunnel1.setPos(-1000, 1180, 2)
+        game.tunnel1.setRotation(90, 0, 0)
+        game.tunnel1.setScale(54, 50, 50)
+
+        game.tunnel2 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/tunnel.gltf")
+        game.tunnel2.setPos(1150, 1180, 2)
+        game.tunnel2.setRotation(90, 0, 0)
+        game.tunnel2.setScale(54, 50, 50)
+
+
+        #########################
+        # Car                   #
+        #########################
+        game.tunnel1 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/taxi.gltf")
+        game.tunnel1.setPos(-500, 1180, 2)
+        game.tunnel1.setRotation(90, 0, 0)
+        game.tunnel1.setScale(15, 15, 15)
