@@ -192,6 +192,11 @@ class CGame(ShowBase):
         if self.sun_direction > 360:
             self.sun_direction = 0
 
+        if 20 < self.sun_direction < 160:
+            self.render.clearLight(self.dlnp)
+        else:
+            self.render.setLight(self.dlnp)
+
         self.dlnp.setHpr(0, self.sun_direction, 0)
 
         # particle task           #########
@@ -217,7 +222,7 @@ class CGame(ShowBase):
             tree_pos = tree.getPos()
             distance = math.sqrt((tree_pos[0] - camera_pos[0]) ** 2 + (tree_pos[1] - camera_pos[1]) ** 2)
 
-            if (distance < 250):
+            if (distance < 270):
                 tree.setAlphaScale(0.3)
             else:
                 tree.setAlphaScale(1.0)

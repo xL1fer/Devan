@@ -99,6 +99,14 @@ class CInitializer():
             game.slnp.lookAt(game.spoint)
             game.render.setLight(game.slnp)
 
+        # point light
+        game.plight = PointLight('plight')
+        game.plight.setColor((1, 0, 0, 0.5))
+        game.plnp = game.render.attachNewNode(game.plight)
+        game.plnp.setPos(0, -game.particle_radius / 2, game.particle_height)
+        game.player.getModel().setLight(game.plnp)
+        game.plnp.reparentTo(game.player.getModel())
+
 
     def initShaders(game):
         game.flatShading = Shader.load(
