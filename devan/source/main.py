@@ -262,6 +262,13 @@ class CGame(ShowBase):
                     
                 skull.setPos(skull_pos[0], skull_pos[1], skull_pos[2])
 
+        # car translation task
+        self.taxi_x -= 2
+        if (self.taxi_x < -1100):
+            self.taxi_x = 1100
+        
+        self.taxi.setPos(self.taxi_x, 1180, 2)
+
         return task.cont
 
 

@@ -75,8 +75,8 @@ class CInitializer():
         game.render.setLight(game.alnp)
 
         # directional light (simulates the sun)
-        game.sun_direction = -60  # 90
-        game.sun_speed = 50.0
+        game.sun_direction = 60  # 90
+        game.sun_speed = 1.0
         game.dlight = DirectionalLight('dlight')
         game.dlight.setColor((0.8, 0.8, 0.6, 1))
         game.dlnp = game.render.attachNewNode(game.dlight)
@@ -90,7 +90,7 @@ class CInitializer():
             game.spoint.setPos(-1035.0 + 300*i, -1025.0 + 300*i, 0.0)
 
             game.slight = Spotlight('slight')
-            game.slight.setColor((1, 1, 0, 1))
+            game.slight.setColor((0.8, 0.8, 0, 1))
             game.lens = PerspectiveLens()
             game.lens.setFov(90, 90)
             game.slight.setLens(game.lens)
@@ -142,6 +142,11 @@ class CInitializer():
         # pickup sound
         game.pickup_sound = game.loader.loadSfx(game.cur_dir + "/../resources/sounds/pickup.mp3")
 
+        # car sound
+        game.car_sound = game.loader.loadSfx(game.cur_dir + "/../resources/sounds/car.mp3")
+        game.car_sound.setLoop(True)
+        game.car_sound.play()
+
         # ambient sound
         game.ambient_sound = game.loader.loadSfx(game.cur_dir + "/../resources/sounds/ambient.mp3")
         game.ambient_sound.setLoop(True)
@@ -153,30 +158,18 @@ class CInitializer():
         #########################
 
         # create scene floor entity
-        """
-        self.scene = CEntity(self.loader, self.render, self.cur_dir + "/../resources/cube.gltf")
-        self.scene.setScale(1010.0, 1010.0, 0.1)
-        self.scene.setColor(0.2, 1.0, 0.6, 1.0)
-        """
-
-        # loading grass / scene floor
-        """grass_texture = self.loader.loadTexture(self.cur_dir + "/../resources/grass.jpg")
-        self.grass = CEntity(self.loader, self.render, self.cur_dir + "/../resources/grass.obj", grass_texture)
-        self.grass.setScale(6.75, 6.75, 0.75)
-        self.grass.setPos(0, 0, -3.25)"""
-
-        game.grass = CEntity(game.loader, game.render, game.cur_dir + "/../resources/grass.gltf")
+        game.grass = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/grass.gltf")
         game.grass.setScale(7.50, 7.50, 1.0)
         game.grass.setPos(0, 0, -3.25)
 
         # card box entity
-        game.box = CEntity(game.loader, game.render, game.cur_dir + "/../resources/box.gltf")
+        game.box = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/box.gltf")
         game.box.setPos(-1100, -1050, 20)
         game.box.setRotation(70.0, 75.0, 0.0)
         game.box.setScale(2000.0, 2000.0, 2000.0)
 
         # dumpster entity
-        game.box = CEntity(game.loader, game.render, game.cur_dir + "/../resources/dumpster.gltf")
+        game.box = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/dumpster.gltf")
         game.box.setPos(-1080, -900, 0)
         game.box.setRotation(70.0, 0.0, 0.0)
         game.box.setScale(40.0, 40.0, 40.0)
@@ -212,8 +205,7 @@ class CInitializer():
                     else:
                         break
 
-                bush_texture = game.loader.loadTexture(game.cur_dir + "/../resources/textures/leaf.jpg")
-                bush = CEntity(game.loader, game.render, game.cur_dir + "/../resources/bush.gltf", bush_texture)
+                bush = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/bush.gltf")
                 bush.setScale(6.0, 6.0, 6.0)
                 bush.setPos(x_bush, y_bush, 1)
                 game.trees_ud[-1].append((x_bush, y_bush, 0))
@@ -236,8 +228,7 @@ class CInitializer():
                     else:
                         break
 
-                bush_texture = game.loader.loadTexture(game.cur_dir + "/../resources/textures/leaf.jpg")
-                bush = CEntity(game.loader, game.render, game.cur_dir + "/../resources/bush.gltf", bush_texture)
+                bush = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/bush.gltf")
                 bush.setScale(6.0, 6.0, 6.0)
                 bush.setPos(x_bush2, y_bush2, 0)
                 game.trees_ld[-1].append((x_bush2, y_bush2, 0))
@@ -280,7 +271,7 @@ class CInitializer():
                     else:
                         break
 
-                tree = CEntity(game.loader, game.trees_node, game.cur_dir + "/../resources/tree.gltf")
+                tree = CEntity(game.loader, game.trees_node, game.cur_dir + "/../resources/models/tree.gltf")
                 tree.setScale(1.0, 1.0, 1.0)
                 tree.setPos(x_tree, y_tree, 15)
                 game.trees_ud[z].append((x_tree, y_tree, 1))
@@ -314,7 +305,7 @@ class CInitializer():
                     else:
                         break
 
-                tree = CEntity(game.loader, game.trees_node, game.cur_dir + "/../resources/tree.gltf")
+                tree = CEntity(game.loader, game.trees_node, game.cur_dir + "/../resources/models/tree.gltf")
                 tree.setScale(1.0, 1.0, 1.0)
                 tree.setPos(x_tree, y_tree, 15)
                 game.trees_ld[z].append((x_tree, y_tree, 1))
@@ -325,7 +316,7 @@ class CInitializer():
         #########################
 
         # create player instance
-        game.player = CPlayer(game.render, game.cur_dir + "/../resources/cat.gltf")
+        game.player = CPlayer(game.render, game.cur_dir + "/../resources/models/cat.gltf")
         game.player.setTargetPos(-1000 + game.player.getTargetDist(), -1000, 30)
         game.player.setScale(80, 80, 80)
         game.player.setPos(-1000, -1000, 5)
@@ -339,7 +330,7 @@ class CInitializer():
         game.player.setAnimLoop("idle", 1, 36)
 
         # small particle around player
-        game.particle = CEntity(game.loader, game.player.getModel(), game.cur_dir + "/../resources/cube.gltf")
+        game.particle = CEntity(game.loader, game.player.getModel(), game.cur_dir + "/../resources/models/cube.gltf")
         game.particle.setScale(0.008, 0.008, 0.008)
         game.particle_radius = 0.4
         game.particle_rotation = 0
@@ -350,7 +341,7 @@ class CInitializer():
 
         """
         # auxiliar target visualization
-        game.target = CEntity(game.loader, game.render, game.cur_dir + "/../resources/cube.gltf")
+        game.target = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/cube.gltf")
         game.target.setPos(game.player.getTargetDist(), 0, 30)
         game.target.setColor(0.8, 0.0, 0.0, 1.0)
         game.target.setSpeed(80.0)
@@ -360,7 +351,7 @@ class CInitializer():
         #########################
         # Street Light          #
         #########################
-        game.slight = CEntity(game.loader, game.render, game.cur_dir + "/../resources/slight.gltf")
+        game.slight = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/slight.gltf")
         game.slight.setScale(0.4, 0.4, 0.35)
         game.slight.setPos(1100.0, 1100.0, 0.0)
         """
@@ -371,10 +362,10 @@ class CInitializer():
         #########################
         game.lamps = list()
         for i in range(7):
-            lamp = CEntity(game.loader, game.render, game.cur_dir + "/../resources/lamp.obj")
-            lamp.setScale(0.03, 0.03, 0.03)
-            lamp.setPos(-1050.0 + 300*i, -1000.0 + 300*i, 10.0)
-            lamp.setRotation(-45, 90, 0)
+            lamp = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/lamp.gltf")
+            lamp.setScale(40.0, 40.0, 40.0)
+            lamp.setPos(-1050.0 + 300 * i, -1000.0 + 300 * i, 6.0)
+            lamp.setRotation(-45, 0, 0)
 
             game.lamps.append(lamp)
 
@@ -390,7 +381,7 @@ class CInitializer():
         game.skulls_height = 15
         game.skulls_height_increment = 0.03
 
-        game.skull1 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
+        game.skull1 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/models/skull.obj")
         #game.skull1.setPos(-35.0, 0.0, 0.0)
         game.skull1.setScale(0.5, 0.5, 0.5)
         game.skull1.setRotation(22.5, 0, 0)
@@ -398,14 +389,14 @@ class CInitializer():
         game.skull1.setShaderInput("cameraPosition", game.camera.getPos())
         game.skull1.setMaterial(game.emerald_material)
 
-        game.skull2 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
+        game.skull2 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/models/skull.obj")
         #game.skull2.setPos(0.0, 35.0, 0.0)
         game.skull2.setScale(0.5, 0.5, 0.5)
         game.skull2.setShader(game.gouraudShading)
         game.skull2.setShaderInput("cameraPosition", game.camera.getPos())
         game.skull2.setMaterial(game.ruby_material)
 
-        game.skull3 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/skull.obj")
+        game.skull3 = CEntity(game.loader, game.skulls_node, game.cur_dir + "/../resources/models/skull.obj")
         #game.skull3.setPos(35.0, 0.0, 0.0)
         game.skull3.setScale(0.5, 0.5, 0.5)
         game.skull3.setRotation(-22.5, 0, 0)
@@ -436,7 +427,7 @@ class CInitializer():
         #########################
         # Road                  #
         #########################
-        game.road = CEntity(game.loader, game.render, game.cur_dir + "/../resources/road.gltf")
+        game.road = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/road.gltf")
         game.road.setPos(0, 1180, 0)
         game.road.setScale(50, 700, 50)
         game.road.setRotation(90, 0, 0)
@@ -445,12 +436,12 @@ class CInitializer():
         #########################
         # Tunnel                #
         #########################
-        game.tunnel1 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/tunnel.gltf")
+        game.tunnel1 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/tunnel.gltf")
         game.tunnel1.setPos(-1000, 1180, 2)
         game.tunnel1.setRotation(90, 0, 0)
         game.tunnel1.setScale(54, 50, 50)
 
-        game.tunnel2 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/tunnel.gltf")
+        game.tunnel2 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/tunnel.gltf")
         game.tunnel2.setPos(1150, 1180, 2)
         game.tunnel2.setRotation(90, 0, 0)
         game.tunnel2.setScale(54, 50, 50)
@@ -459,7 +450,8 @@ class CInitializer():
         #########################
         # Car                   #
         #########################
-        game.tunnel1 = CEntity(game.loader, game.render, game.cur_dir + "/../resources/taxi.gltf")
-        game.tunnel1.setPos(-500, 1180, 2)
-        game.tunnel1.setRotation(90, 0, 0)
-        game.tunnel1.setScale(15, 15, 15)
+        game.taxi_x = 1100
+        game.taxi = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/taxi.gltf")
+        game.taxi.setPos(game.taxi_x, 1180, 2)
+        game.taxi.setRotation(90, 0, 0)
+        game.taxi.setScale(15, 15, 15)
