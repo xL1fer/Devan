@@ -84,19 +84,21 @@ class CInitializer():
         game.render.setLight(game.dlnp)
 
         # spot light
-        game.spoint = NodePath("SpotLightPoint")
-        game.spoint.reparentTo(game.render)
-        game.spoint.setPos(0.0, 0.0, 0.0)
+        for i in range(7):
+            game.spoint = NodePath("SpotLightPoint")
+            game.spoint.reparentTo(game.render)
+            game.spoint.setPos(-1035.0 + 300*i, -1025.0 + 300*i, 0.0)
 
-        game.slight = Spotlight('slight')
-        game.slight.setColor((1, 1, 0, 1))
-        game.lens = PerspectiveLens()
-        game.lens.setFov(90, 90)
-        game.slight.setLens(game.lens)
-        game.slnp = game.render.attachNewNode(game.slight)
-        game.slnp.setPos(0, 5, 300)
-        game.slnp.lookAt(game.spoint)
-        game.render.setLight(game.slnp)
+            game.slight = Spotlight('slight')
+            game.slight.setColor((1, 1, 0, 1))
+            game.lens = PerspectiveLens()
+            game.lens.setFov(90, 90)
+            game.slight.setLens(game.lens)
+            game.slnp = game.render.attachNewNode(game.slight)
+            game.slnp.setPos(-1035.0 + 300*i, -1025.0 + 300*i, 150)
+            game.slnp.lookAt(game.spoint)
+            game.render.setLight(game.slnp)
+
 
     def initShaders(game):
         game.flatShading = Shader.load(
@@ -329,8 +331,8 @@ class CInitializer():
         game.player.setPos(-1000, -1000, 5)
         game.player.setSpeed(180.0)
 
-        game.player.setShader(game.flatShading)
-        game.player.setShaderInput("cameraPosition", game.camera.getPos())
+        #game.player.setShader(game.flatShading)
+        #game.player.setShaderInput("cameraPosition", game.camera.getPos())
 
         # game.player.setAnimRate("run", 1.7)
         game.player.setAnimRate("idle", 0.7)
@@ -359,7 +361,23 @@ class CInitializer():
         #########################
         game.slight = CEntity(game.loader, game.render, game.cur_dir + "/../resources/slight.gltf")
         game.slight.setScale(0.4, 0.4, 0.35)
-        game.slight.setPos(5.0, 50.0, 0.0)
+        game.slight.setPos(1100.0, 1100.0, 0.0)
+        game.slight.setRotation(-45, 90, 0) # ...
+
+
+        #########################
+        # Lamp                  #
+        #########################
+        game.lamps = list()
+        for i in range(7):
+            lamp = CEntity(game.loader, game.render, game.cur_dir + "/../resources/lamp.obj")
+            lamp.setScale(0.03, 0.03, 0.03)
+            lamp.setPos(-1050.0 + 300*i, -1000.0 + 300*i, 10.0)
+            lamp.setRotation(-45, 90, 0) # ...
+
+            game.lamps.append(lamp)
+            ind += 1
+
 
         #########################
         # Misc                  #
