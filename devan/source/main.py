@@ -83,6 +83,10 @@ class CGame(ShowBase):
                 props.setCursorHidden(False)
                 base.win.requestProperties(props)
 
+                self.particle.getModel().show()
+
+                self.player.getModel().setLight(self.plnp)
+
             elif (self.camera_mode == FREEROAMINGMODE):
                 # make sure animation does not play when in free roaming mode
                 if self.player.isMoving():
@@ -99,6 +103,10 @@ class CGame(ShowBase):
                 props = WindowProperties()
                 props.setCursorHidden(True)
                 base.win.requestProperties(props)
+
+                self.particle.getModel().hide()
+
+                self.player.getModel().clearLight(self.plnp)
 
         if key_map["space"]:
             self.camera_speed = 10
