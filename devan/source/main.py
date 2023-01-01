@@ -85,7 +85,9 @@ class CGame(ShowBase):
 
                 self.particle.getModel().show()
 
-                self.player.getModel().setLight(self.plnp)
+                #self.player.getModel().setLight(self.plnp)
+                self.plnp.reparentTo(self.player.getModel())
+                self.plnp.setPos(0, -self.particle_radius / 2, self.particle_height)
 
             elif (self.camera_mode == FREEROAMINGMODE):
                 # make sure animation does not play when in free roaming mode
@@ -106,7 +108,8 @@ class CGame(ShowBase):
 
                 self.particle.getModel().hide()
 
-                self.player.getModel().clearLight(self.plnp)
+                #self.player.getModel().clearLight(self.plnp)
+                self.plnp.reparentTo(self.render)
 
         if key_map["space"]:
             self.camera_speed = 10
@@ -135,6 +138,12 @@ class CGame(ShowBase):
 
             self.camera.setHpr(self.camera_heading, self.camera_pitch, 0)
 
+            # make particle light follow the camera when in free roaming mode
+            camera_pos = self.camera.getPos()
+            self.plnp.setPos(camera_pos[0], camera_pos[1], camera_pos[2])
+
+            
+
         return task.cont
 
     # keyboard tasks
@@ -143,7 +152,6 @@ class CGame(ShowBase):
 
         target_pos = self.player.getTargetPos()
         player_pos = self.player.getPos()
-        camera_pos = self.camera.getPos()
 
         distance = math.sqrt((target_pos[0] - player_pos[0]) ** 2 + (target_pos[1] - player_pos[1]) ** 2)
         # print(distance)

@@ -101,10 +101,12 @@ class CInitializer():
 
         # point light
         game.plight = PointLight('plight')
-        game.plight.setColor((1, 0, 0, 0.5))
+        game.plight.setColor((1, 0, 0, 1.0))
+        game.plight.setAttenuation((0, 0, 0.002))   # attenuation makes so that the light does not reach all objects present in the scene
         game.plnp = game.render.attachNewNode(game.plight)
         game.plnp.setPos(0, -game.particle_radius / 2, game.particle_height)
-        game.player.getModel().setLight(game.plnp)
+        #game.player.getModel().setLight(game.plnp)
+        game.render.setLight(game.plnp)
         game.plnp.reparentTo(game.player.getModel())
 
 
