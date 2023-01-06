@@ -373,21 +373,9 @@ class CInitializer():
         """
         # auxiliar target visualization
         game.target = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/cube.gltf")
-        game.target.setPos(game.player.getTargetDist(), 0, 30)
         game.target.setColor(0.8, 0.0, 0.0, 1.0)
-        game.target.setSpeed(80.0)
         """
-
-        """
-        #########################
-        # Street Light          #
-        #########################
-        game.slight = CEntity(game.loader, game.render, game.cur_dir + "/../resources/models/slight.gltf")
-        game.slight.setScale(0.4, 0.4, 0.35)
-        game.slight.setPos(1100.0, 1100.0, 0.0)
-        """
-
-
+        
         #########################
         # Lamp                  #
         #########################

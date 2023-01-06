@@ -214,8 +214,12 @@ class CGame(ShowBase):
 
         self.player.setTargetPos(target_pos[0], target_pos[1], target_pos[2])
         self.player.setPos(player_pos.x, player_pos.y, player_pos.z)
+
         # look at the target cube
         self.player.setRotation(alpha, 0, 0)
+
+        # update auxiliar target visualization position
+        #self.target.setPos(target_pos[0], target_pos[1], target_pos[2] / 2)
 
         return task.cont
 
