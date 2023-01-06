@@ -1,3 +1,23 @@
+"""
+    main.py
+
+    ====================================
+
+    University of Aveiro
+    Department of Electronics, Telecommunications and Informatics
+
+    Visual Computing
+    Master's in Computer Engineering
+
+    João Bernardo Coelho Leite - 115041
+    Luís Miguel Gomes Batista - 115279
+
+    ====================================
+    
+    Visual Computing Project
+    Devan
+"""
+
 from panda3d.core import *
 
 from direct.showbase.ShowBase import ShowBase
@@ -25,7 +45,6 @@ key_map = {
     "c": False,
     "space": False
 }
-
 
 # game class
 class CGame(ShowBase):

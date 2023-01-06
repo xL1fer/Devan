@@ -1,3 +1,23 @@
+"""
+    initializer.py
+
+    ====================================
+
+    University of Aveiro
+    Department of Electronics, Telecommunications and Informatics
+
+    Visual Computing
+    Master's in Computer Engineering
+
+    João Bernardo Coelho Leite - 115041
+    Luís Miguel Gomes Batista - 115279
+
+    ====================================
+    
+    Visual Computing Project
+    Devan
+"""
+
 from panda3d.core import *
 
 import os
@@ -15,6 +35,7 @@ THIRDPERSONMODE = False  # third person
 
 class CInitializer():
 
+    # constructor
     def __init__():
         pass
 
