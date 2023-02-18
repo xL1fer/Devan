@@ -4,5 +4,5 @@ Master's in Computer Engineering project done under the course of Visual Computi
 
 ## Note
 
-Python needs to be installed to run the program as well as some external libraries such as panda3d.
+Python needs to be installed to run the program as well as some external libraries such as Panda3D.
 After having the required libraries installed, you can simply run the application by clicking the "compile.bat" file.
